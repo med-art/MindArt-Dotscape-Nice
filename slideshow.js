@@ -4,20 +4,6 @@ let slide = 4;
 let delayTime = 800;
 let introState = 0;
 
-function mousePressed() {
-  if (introState < 3) {
-    if (audio.isPlaying()) {} else {
-      //audio.loop(5);
-    }
-  }
-  if (slide === 0) {
-    click.play();
-    startButton.remove();
-    slide++;
-    slideShow();
-  }
-  return false;
-}
 
 function slideShow() {
   if (slide === 0) {
