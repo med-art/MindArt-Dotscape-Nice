@@ -296,6 +296,17 @@ function mousePressed() {
       dots[i].clicked(winMouseX, winMouseY);
     }
   }
+  if (introState < 3) {
+    if (audio.isPlaying()) {} else {
+      audio.loop(5);
+    }
+  }
+  if (slide === 0) {
+    click.play();
+    startButton.remove();
+    slide++;
+    slideShow();
+  }
   return false;
 }
 
