@@ -48,8 +48,8 @@ function setup() {
   slideShow();
   makeintroDots();
 
-  // canvas.addEventListener('touchmove', moved);
-  // canvas.addEventListener('mousemove', moved);
+  canvas.addEventListener('touchmove', moved);
+  canvas.addEventListener('mousemove', moved);
   canvas.addEventListener('touchstart', touchdown);
   canvas.addEventListener('mousedown', touchdown);
   // canvas.addEventListener('touchend', touchstop);
@@ -299,7 +299,7 @@ function touchEnded() {
 }
 
 function touchdown(ev) {
-
+	ev.preventDefault();
   if (introState === 3) {
     for (let i = 0; i < dotsCount; i++) {
       dots[i].getCol(winMouseX, winMouseY);
@@ -319,54 +319,54 @@ function touchdown(ev) {
   }
 }
 
-// function touchMoved() {
-//
-//   if (introState === 3) {
-//     for (let i = 0; i < dotsCount; i++) {
-//       dots[i].clicked(winMouseX, winMouseY);
-//     }
-//     hueDrift = int(random(-2, 2));
-//     satDrift = int(random(-2, 2));
-//     brightDrift = int(random(-2, 2));
-//     lineLayer.stroke(colHue + hueDrift, colSat + satDrift, colBri + brightDrift, 80);
-//     lineLayer.strokeWeight(5);
-//     lineLayer.clear();
-//     if (throughDotCount > 0) {
-//       lineLayer.line(tempwinMouseX, tempwinMouseY, winMouseX, winMouseY);
-//     }
-//   } else {
-//     introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 40, 40);
-//     if (dist(mouseX, mouseY, xintro[throughDotCount], yintro[throughDotCount]) < 30) {
-//       let _x = xintro[throughDotCount] + random(-200, 200);
-//       let y;
-//       if (direction) {
-//         _y = yintro[throughDotCount] + random(50, 110);
-//       } else if (!direction) {
-//         _y = yintro[throughDotCount] - random(50, 110);
-//       }
-//       if (_x < 100) {
-//         _x = _x + width / 2;
-//       }
-//       if (_x > width - 100) {
-//         _x = _x - width / 2
-//       }
-//       if (_y < 100) {
-//         direction = !direction;
-//       }
-//       if (_y > height - 100) {
-//         direction = !direction;
-//       }
-//       xintro.push(_x);
-//       yintro.push(_y);
-//       throughDotCount++;
-//       if (throughDotCount > 1) {
-//         introLayer.background(205, 12, 64, 0.1);
-//         introLayer.line(xintro[throughDotCount - 2], yintro[throughDotCount - 2], xintro[throughDotCount - 1], yintro[throughDotCount - 1]);
-//       }
-//     }
-//   }
-//   return false;
-// }
+function moved() {
+	ev.preventDefault();
+  if (introState === 3) {
+    for (let i = 0; i < dotsCount; i++) {
+      dots[i].clicked(winMouseX, winMouseY);
+    }
+    hueDrift = int(random(-2, 2));
+    satDrift = int(random(-2, 2));
+    brightDrift = int(random(-2, 2));
+    lineLayer.stroke(colHue + hueDrift, colSat + satDrift, colBri + brightDrift, 80);
+    lineLayer.strokeWeight(5);
+    lineLayer.clear();
+    if (throughDotCount > 0) {
+      lineLayer.line(tempwinMouseX, tempwinMouseY, winMouseX, winMouseY);
+    }
+  } else {
+    introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 40, 40);
+    if (dist(mouseX, mouseY, xintro[throughDotCount], yintro[throughDotCount]) < 30) {
+      let _x = xintro[throughDotCount] + random(-200, 200);
+      let y;
+      if (direction) {
+        _y = yintro[throughDotCount] + random(50, 110);
+      } else if (!direction) {
+        _y = yintro[throughDotCount] - random(50, 110);
+      }
+      if (_x < 100) {
+        _x = _x + width / 2;
+      }
+      if (_x > width - 100) {
+        _x = _x - width / 2
+      }
+      if (_y < 100) {
+        direction = !direction;
+      }
+      if (_y > height - 100) {
+        direction = !direction;
+      }
+      xintro.push(_x);
+      yintro.push(_y);
+      throughDotCount++;
+      if (throughDotCount > 1) {
+        introLayer.background(205, 12, 64, 0.1);
+        introLayer.line(xintro[throughDotCount - 2], yintro[throughDotCount - 2], xintro[throughDotCount - 1], yintro[throughDotCount - 1]);
+      }
+    }
+  }
+
+}
 
 function makeintroDots() {
   xintro[0] = int(random(width / 10, width - (width / 10)));
