@@ -1,31 +1,20 @@
 let dots = [];
-let tempwinMouseX = 0;
-let tempwinMouseY = 0;
-let tempwinMouseX2 = 0;
-let tempwinMouseY2 = 0;
-let lineLayer, permaLine;
-let dotSize = 4;
-let dotQty = 20;
-let ringQty = 0;
-let hueDrift, brightDrift, satDrift;
 let throughDotCount = 0;
+let dotSize, dotQty, ringQty;
+let tempwinMouseX, tempwinMouseY, tempwinMouseX2, tempwinMouseY2; // defaults
+let stage = 0;
+let hueDrift, brightDrift, satDrift;
 let longEdge, shortEdge, circleRad, vMax, wmax, hmax;
 let primaryArray = [360, 60, 240];
 let colHue = 360,
   colSat = 100,
   colBri = 100;
-let stage = 0;
-let dotsCount = 0;
-let hueCapture = 0;
-let verifyX = 0;
-let verifyY = 0;
+let verifyX = 0,
+  verifyY = 0;
 let tintedBG;
-let rMultiplier = 1;
 let click;
-let xintro = [];
-let yintro = [];
-let tempxintro;
-let tempyintro;
+let xintro = [],
+  yintro = [];
 let direction = 0;
 let stage1array = [
   [1, 1, 4, 1, 1, 3, 4, 3, 1, 5, 4, 5, 1, 7, 4, 7],
@@ -61,25 +50,21 @@ function setup() {
 }
 
 function windowResized() {
-
   resizeCanvas(windowWidth, windowHeight);
   introLayer.resizeCanvas(windowWidth, windowHeight);
   textLayer.resizeCanvas(windowWidth, windowHeight);
   lineLayer.resizeCanvas(windowWidth, windowHeight);
   permaLine.resizeCanvas(windowWidth, windowHeight);
-  tintedBG.resizeCanvas(windowWidth,windowHeight);
+  tintedBG.resizeCanvas(windowWidth, windowHeight);
   dimensionCalc();
-  if (introState === 3){
-   removeElements();
-   writeTextUI();
-   stage--;
-   nextGrid();
-
-
- } else if (introState < 3 && slide > 0){
-   makeintroDots();
- }
-
+  if (introState === 3) {
+    removeElements();
+    writeTextUI();
+    stage--;
+    nextGrid();
+  } else if (introState < 3 && slide > 0) {
+    makeintroDots();
+  }
 }
 
 function dimensionCalc() {
@@ -99,12 +84,10 @@ function dimensionCalc() {
 }
 
 function stage0grid() {
-  dotsCount = 0;
   dots = [];
   let w = width / 5;
   let h = height / 9;
-  let r = longEdge / 50;
-  dotQtyX = 1;
+  let r = vMax * 2;
   dotQtyY = stage1array[stage].length / 2;
   for (let i = 0; i < stage1array[stage].length; i += 2) {
     dots[dotsCount++] = new Dot(stage1array[stage][i] * w, stage1array[stage][i + 1] * h, r);
@@ -112,54 +95,52 @@ function stage0grid() {
 }
 
 function stage1grid() {
-  dotsCount = 0;
   dots = [];
   if (stage === 3) {
     dotQtyX = 7;
     dotQtyY = 9;
-    r = longEdge / 30;
-    let spaceX = width / dotQtyX + 2;
-    let spaceY = height / dotQtyY + 2;
+    r = vMax * 1.2;
+    let spaceX = width / dotQtyX + 4;
+    let spaceY = height / dotQtyY + 4;
     for (let i = 0; i < dotQtyX; i++) {
       for (let j = 0; j < dotQtyY; j++) {
-        dots[dotsCount++] = new Dot((i + 1) * (spaceX), (j + 1) * (spaceY), 12);
+        dots[dotsCount++] = new Dot((i + 1) * (spaceX), (j + 1) * (spaceY), r);
       }
     }
   } else if (stage === 4) {
     dotQtyX = 2;
     dotQtyY = 5 * 4;
-    r = longEdge / 30;
-    let spaceX = width / dotQtyX + 1;
-    let spaceY = height / dotQtyY + 1;
+    r = vMax * 1;
+    let spaceX = width / dotQtyX + 2;
+    let spaceY = height / dotQtyY + 2;
     for (let i = 0; i < dotQtyX; i++) {
       for (let j = 0; j < dotQtyY; j += 4) {
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) - (spaceX / 6), (j + 0.5) * (spaceY), 11);
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + (spaceX / 6), (j + 0.5) * (spaceY), 11);
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) - (spaceX / 3), (j + 0.5) * (spaceY) + (spaceY * 2), 11);
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + ((spaceX / 6) * 2), (j + 0.5) * (spaceY) + (spaceY * 2), 11);
+        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) - (spaceX / 6), (j + 0.5) * (spaceY), r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + (spaceX / 6), (j + 0.5) * (spaceY), r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) - (spaceX / 3), (j + 0.5) * (spaceY) + (spaceY * 2), r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + ((spaceX / 6) * 2), (j + 0.5) * (spaceY) + (spaceY * 2), r);
       }
     }
   } else if (stage === 5) {
     dotQtyX = 4;
     dotQtyY = 13 * 4;
-    r = longEdge / 30;
-    let spaceX = width / dotQtyX + 1;
-    let spaceY = height / dotQtyY + 1;
+    r = vMax * 0.5;
+    let spaceX = width / dotQtyX + 2;
+    let spaceY = height / dotQtyY + 2;
     for (let i = 0; i < dotQtyX; i++) {
       for (let j = 0; j < dotQtyY; j += 4) {
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) - (spaceX / 6), (j + 0.5) * (spaceY), 8);
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + (spaceX / 6), (j + 0.5) * (spaceY), 8);
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) - (spaceX / 3), (j + 0.5) * (spaceY) + (spaceY * 2), 8);
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + ((spaceX / 6) * 2), (j + 0.5) * (spaceY) + (spaceY * 2), 8);
+        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) - (spaceX / 6), (j + 0.5) * (spaceY), r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + (spaceX / 6), (j + 0.5) * (spaceY), r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) - (spaceX / 3), (j + 0.5) * (spaceY) + (spaceY * 2), r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + ((spaceX / 6) * 2), (j + 0.5) * (spaceY) + (spaceY * 2), r);
       }
     }
   }
 }
 
 function stage2grid() {
-  let r = longEdge / 100;
+  let r = vMax;
   ringQty = 1;
-  dotsCount = 0;
   if (stage === 6) {
     dotQty = 7;
   }
@@ -179,7 +160,6 @@ function stage2grid() {
 
 function stage3grid() {
   let r = longEdge / 100;
-  dotsCount = 0;
   if (stage === 8) {
     dotQty = 7;
     ringQty = 3;
@@ -192,19 +172,15 @@ function stage3grid() {
       let tempX = (tran * cos(radians(rotateVal))) + width / 2;
       let tempY = (tran * sin(radians(rotateVal))) + height / 2;
       r = r - (r / 100);
-      //console.log(rotateVal);
-      //  lineLayer.circle(tempX, tempY, r-(i*vMax));
       dots[dotsCount++] = new Dot(tempX, tempY, r);
     }
   }
 }
 
 function stage4grid() {
-  // at these are basic arrangements of grids
   let r = longEdge / 100;
   let gap;
   let remainder;
-  dotsCount = 0;
   if (stage === 9) {
     dotQty = 50;
     r = longEdge / 180;
@@ -223,41 +199,18 @@ function stage4grid() {
     let tempX = (tran * cos(radians(rotateVal))) + width / 2;
     let tempY = (tran * sin(radians(rotateVal))) + height / 2;
     r = r + ((i / 40000) * vMax);
-    //  lineLayer.circle(tempX, tempY, r-(i*vMax));
     dots[dotsCount++] = new Dot(tempX, tempY, r);
   }
 }
 
 function stage5grid() {
-  // at these are basic arrangements of grids
-  let r = longEdge / 100;
-  dotsCount = 0;
   if (stage === 11) {
-    dotQty = 1000;
-    r = longEdge / 750;
-    circleRad = circleRad * 2;
-  }
-  for (let i = 0; i < dotQty; i++) {
-    let rotateVal = i * 137.5;
-    let tran = (((circleRad * 0.8) / dotQty) * (i + 1)) + circleRad * 0.2;
-    let tempX = (tran * cos(radians(rotateVal))) + width / 2;
-    let tempY = (tran * sin(radians(rotateVal))) + height / 2;
-    r = r + r / 1000;
-    let tempRad = random(r * 0.5, r * 2.5)
-    //  lineLayer.circle(tempX, tempY, r-(i*vMax));
-    dots[dotsCount++] = new Dot(tempX, tempY, tempRad);
-  }
-}
-
-function stage6grid() {
-  dotsCount = 0;
-  if (stage === 12) {
     x = 7;
     y = 7;
     noiseAmp = 8;
     dotSize = 5;
     //  colToggleUI();
-  } else if (stage === 14) {
+  } else if (stage === 12) {
     writeRestartUI();
   }
   dotQtyX = x;
@@ -280,10 +233,10 @@ function stage6grid() {
 
 function nextGrid() {
   throughDotCount = 0;
+  dotsCount = 0;
   click.play();
   permaLine.clear();
   lineLayer.clear();
-
   if (stage < 3) {
     stage0grid();
   } else if (stage >= 3 && stage < 6) {
@@ -294,12 +247,9 @@ function nextGrid() {
     stage3grid();
   } else if (stage >= 9 && stage < 11) {
     stage4grid();
-  } else if (stage >= 11 && stage < 12) {
+  } else if (stage >= 11 && stage < 13) {
     stage5grid();
-  } else if (stage >= 12 && stage < 15) {
-    stage6grid();
   }
-  //  tintedBG.tint(255-(20*stage));
   tintedBG.image(bg, 0, 0, width, height);
   tintedBG.fill(0, (20 * stage));
   tintedBG.rect(0, 0, width, height);
@@ -322,10 +272,10 @@ function draw() {
       strokeWeight(7);
       line(xintro[throughDotCount - 1], yintro[throughDotCount - 1], mouseX, mouseY);
       image(introLayer, 0, 0, width, height);
-      }
-    if (slide === 0) {} else {
+    }
+    if (slide > 0) {
       textLayer.text(introText[slide - 1], width / 2, (height / 6) * (slide));
-    } // this if else statgement needs to be replaced with a better system. The current state tracking is not working
+    }
     image(textLayer, 0, 0, width, height);
   }
 }
@@ -342,12 +292,10 @@ function mouseClicked() {
 function touchEnded() {
   if (slide > 0) {
     introLayer.clear();
-
     makeintroDots();
-    }
-
-    lineLayer.clear();
-    throughDotCount = 0;
+  }
+  lineLayer.clear();
+  throughDotCount = 0;
 }
 
 function touchStarted() {
@@ -380,16 +328,13 @@ function touchMoved() {
       lineLayer.line(tempwinMouseX, tempwinMouseY, winMouseX, winMouseY);
     }
   } else {
-    //introLayer.clear();
     introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 40, 40);
     if (dist(mouseX, mouseY, xintro[throughDotCount], yintro[throughDotCount]) < 30) {
       let _x = xintro[throughDotCount] + random(-200, 200);
       let y;
       if (direction) {
         _y = yintro[throughDotCount] + random(50, 110);
-        console.log("now");
       } else if (!direction) {
-        console.log("now");
         _y = yintro[throughDotCount] - random(50, 110);
       }
       if (_x < 100) {
@@ -412,9 +357,6 @@ function touchMoved() {
         introLayer.line(xintro[throughDotCount - 2], yintro[throughDotCount - 2], xintro[throughDotCount - 1], yintro[throughDotCount - 1]);
       }
     }
-    //  if (dist(mouseX, mouseY, xintro[0], yintro[0]) < 40)
-    // image(introLayer, 0, 0, width, height);
-    // do stuff here
   }
   return false;
 }
@@ -426,8 +368,6 @@ function copyLine() {
     permaLine.line(tempwinMouseX, tempwinMouseY, tempwinMouseX2, tempwinMouseY2);
   }
 }
-
-
 class Dot {
   constructor(x, y, r) {
     this.x = x;
@@ -455,11 +395,10 @@ class Dot {
     }
   }
   clicked(x, y) {
+    let rMultiplier = 1;
     let d = dist(x, y, this.x, this.y);
     if (throughDotCount === 0) {
       rMultiplier = 1.2; // increase radius for first grab
-    } else {
-      rMultiplier = 1;
     }
     if (d < this.r * 2.05 * rMultiplier && (this.x != verifyX || this.y != verifyY)) {
       verifyX = this.x;
