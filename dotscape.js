@@ -299,7 +299,7 @@ function touchEnded() {
 }
 
 function touchdown(ev) {
-	ev.preventDefault();
+
   if (introState === 3) {
     for (let i = 0; i < dotsCount; i++) {
       dots[i].getCol(winMouseX, winMouseY);
