@@ -50,8 +50,8 @@ function setup() {
 
   // canvas.addEventListener('touchmove', moved);
   // canvas.addEventListener('mousemove', moved);
-  canvas.addEventListener('touchstart', touchStarted);
-  canvas.addEventListener('mousedown', touchStarted);
+  canvas.addEventListener('touchstart', touchdown);
+  canvas.addEventListener('mousedown', touchdown);
   // canvas.addEventListener('touchend', touchstop);
   // canvas.addEventListener('touchleave', touchstop);
   // canvas.addEventListener('mouseup', touchstop);
@@ -298,7 +298,7 @@ function touchEnded() {
   throughDotCount = 0;
 }
 
-function touchStarted(ev) {
+function touchdown(ev) {
   if (introState === 3) {
     for (let i = 0; i < dotsCount; i++) {
       dots[i].getCol(winMouseX, winMouseY);
@@ -316,7 +316,6 @@ function touchStarted(ev) {
     slide++;
     slideShow();
   }
-  return false;
 }
 
 function touchMoved() {
