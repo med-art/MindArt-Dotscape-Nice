@@ -365,7 +365,7 @@ function moved(ev) {
       }
     }
   }
-
+  return false;
 }
 
 function makeintroDots() {
