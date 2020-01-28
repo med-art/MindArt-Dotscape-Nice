@@ -280,15 +280,6 @@ function draw() {
   }
 }
 
-function mouseClicked() {
-  if (introState === 3) {
-    for (let i = 0; i < dotsCount; i++) {
-      dots[i].getCol(winMouseX, winMouseY);
-      dots[i].clicked(winMouseX, winMouseY);
-    }
-  }
-}
-
 function touchEnded() {
   if (slide > 0) {
     introLayer.clear();
@@ -305,12 +296,6 @@ function touchStarted() {
       dots[i].clicked(winMouseX, winMouseY);
     }
   }
-}
-
-function makeintroDots() {
-  xintro[0] = int(random(width / 10, width - (width / 10)));
-  yintro[0] = int(height / 2);
-  introLayer.ellipse(xintro[0], yintro[0], 40, 40);
 }
 
 function touchMoved() {
@@ -359,6 +344,12 @@ function touchMoved() {
     }
   }
   return false;
+}
+
+function makeintroDots() {
+  xintro[0] = int(random(width / 10, width - (width / 10)));
+  yintro[0] = int(height / 2);
+  introLayer.ellipse(xintro[0], yintro[0], 40, 40);
 }
 
 function copyLine() {
