@@ -289,7 +289,7 @@ function touchEnded() {
   throughDotCount = 0;
 }
 
-function mousePressed() {
+function touchStarted() {
   if (introState === 3) {
     for (let i = 0; i < dotsCount; i++) {
       dots[i].getCol(winMouseX, winMouseY);
