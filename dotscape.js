@@ -289,13 +289,14 @@ function touchEnded() {
   throughDotCount = 0;
 }
 
-function touchStarted() {
+function mousePressed() {
   if (introState === 3) {
     for (let i = 0; i < dotsCount; i++) {
       dots[i].getCol(winMouseX, winMouseY);
       dots[i].clicked(winMouseX, winMouseY);
     }
   }
+  return false;
 }
 
 function touchMoved() {
