@@ -10,6 +10,7 @@ function slideShow() {
     startButton = createButton(introText[0]);
     startButton.class("startButton");
     startButton.position((width / 2) - (12 * vMax), (height / 2) - (4 * vMax));
+    startButton.mousePressed(startUp);
   }
   if (slide === introText.length) {
     textLayer.clear();

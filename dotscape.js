@@ -310,15 +310,18 @@ function touchdown(ev) {
     if (audio.isPlaying()) {} else {
       audio.loop(5);
     }
+    if (slide === 0) {
+    startUp();
+    }
   }
-  if (slide === 0) {
-    click.play();
-    startButton.remove();
-    slide++;
-    slideShow();
-  }
-
 return false;
+}
+
+function startUp(){
+  click.play();
+  startButton.remove();
+  slide++;
+  slideShow();
 }
 
 function moved(ev) {
