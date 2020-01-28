@@ -319,7 +319,7 @@ function touchdown(ev) {
   }
 }
 
-function moved() {
+function moved(ev) {
 	ev.preventDefault();
   if (introState === 3) {
     for (let i = 0; i < dotsCount; i++) {
