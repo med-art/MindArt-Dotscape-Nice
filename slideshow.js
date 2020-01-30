@@ -1,7 +1,7 @@
 let introText = ["Touchez", "Regardez", "Ecoutez", "Touchez"];
 let appCol = "#f1b300";
 let slide = 4;
-let delayTime = 800;
+let delayTime = 8000;
 let introState = 0;
 
 
@@ -27,7 +27,7 @@ function slideShow() {
     textLayer.rectMode(CENTER);
     if (slide > 0) {
       if (slide === introText.length - 1) {
-        delayTime = 1000;
+        delayTime = 10000;
       }
       slide++;
       setTimeout(slideShow, delayTime);
