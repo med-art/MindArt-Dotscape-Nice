@@ -1,6 +1,6 @@
 let dots = [];
 let throughDotCount = 0;
-let mousePress;
+let isMousedown;
 let dotSize, dotQty, ringQty;
 let tempwinMouseX, tempwinMouseY, tempwinMouseX2, tempwinMouseY2; // defaults
 let stage = 0;
@@ -53,9 +53,9 @@ function setup() {
   canvas.addEventListener('mousemove', moved);
   canvas.addEventListener('touchstart', touchdown);
   canvas.addEventListener('mousedown', touchdown);
-  // canvas.addEventListener('touchend', touchstop);
-  // canvas.addEventListener('touchleave', touchstop);
-  // canvas.addEventListener('mouseup', touchstop);
+  canvas.addEventListener('touchend', touchstop);
+  canvas.addEventListener('touchleave', touchstop);
+  canvas.addEventListener('mouseup', touchstop);
 
 }
 
@@ -301,7 +301,7 @@ function touchEnded() {
 
 function touchdown(ev) {
 
-  mousePress = 1;
+  isMousedown = 1;
 
   if (introState === 3) {
     for (let i = 0; i < dotsCount; i++) {
@@ -320,6 +320,11 @@ function touchdown(ev) {
 return false;
 }
 
+
+function touchstop(){
+  isMousedown = 0;
+}
+
 function startUp(){
   click.play();
   startButton.remove();
@@ -329,7 +334,7 @@ function startUp(){
 
 function moved(ev) {
 
-if (!mousePress) return;
+if (!isMousedown) return;
 
 	ev.preventDefault();
   if (introState === 3) {
