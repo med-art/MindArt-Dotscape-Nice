@@ -1,5 +1,6 @@
 let dots = [];
 let throughDotCount = 0;
+let mousePress;
 let dotSize, dotQty, ringQty;
 let tempwinMouseX, tempwinMouseY, tempwinMouseX2, tempwinMouseY2; // defaults
 let stage = 0;
@@ -300,6 +301,8 @@ function touchEnded() {
 
 function touchdown(ev) {
 
+  mousePresss = 1;
+
   if (introState === 3) {
     for (let i = 0; i < dotsCount; i++) {
       dots[i].getCol(winMouseX, winMouseY);
@@ -325,6 +328,9 @@ function startUp(){
 }
 
 function moved(ev) {
+
+if (!mousePressed) return;
+
 	ev.preventDefault();
   if (introState === 3) {
     for (let i = 0; i < dotsCount; i++) {
