@@ -301,7 +301,7 @@ function touchEnded() {
 
 function touchdown(ev) {
 
-  mousePresss = 1;
+  mousePress = 1;
 
   if (introState === 3) {
     for (let i = 0; i < dotsCount; i++) {
@@ -329,7 +329,7 @@ function startUp(){
 
 function moved(ev) {
 
-if (!mousePressed) return;
+if (!mousePress) return;
 
 	ev.preventDefault();
   if (introState === 3) {
