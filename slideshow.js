@@ -4,7 +4,6 @@ let slide = 4;
 let delayTime = 8000;
 let introState = 0;
 
-
 function slideShow() {
   if (slide === 0) {
     startButton = createButton(introText[0]);
