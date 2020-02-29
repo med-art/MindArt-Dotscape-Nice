@@ -1,28 +1,30 @@
+let stage = 0;
+
+// dot tracking
 let dots = [];
 let throughDotCount = 0;
-let isMousedown;
 let dotSize, dotQty, ringQty;
+
+// mouse/geometry tracking
+let isMousedown;
 let tempwinMouseX, tempwinMouseY, tempwinMouseX2, tempwinMouseY2; // defaults
-let stage = 0;
+let verifyX = 0,
+  verifyY = 0;
+let click;
+let vMax, circleRad;
+
+// colour tracking
 let hueDrift, brightDrift, satDrift;
-let longEdge, shortEdge, circleRad, vMax, wmax, hmax;
 let primaryArray = [360, 60, 240];
 let colHue = 360,
   colSat = 100,
   colBri = 100;
-let verifyX = 0,
-  verifyY = 0;
 let tintedBG;
-let click;
+
+// intro tracking
 let xintro = [],
   yintro = [];
 let direction = 0;
-let stage1array = [
-  [1, 1, 4, 1, 1, 3, 4, 3, 1, 5, 4, 5, 1, 7, 4, 7],
-  [1, 1, 2, 1, 3, 1, 4, 1, 1, 3, 4, 3, 1, 5, 4, 5, 1, 7, 2, 7, 3, 7, 4, 7],
-  [1, 1, 3, 1, 2, 2, 4, 2, 1, 3, 3, 3, 2, 4, 4, 4, 1, 5, 3, 5, 2, 6, 4, 6, 1, 7, 3, 7, 2, 8, 4, 8]
-];
-
 let introHue = 0;
 
 function preload() {
@@ -32,15 +34,12 @@ function preload() {
 }
 
 function setup() {
+
+  // create canvas and all layers
   createCanvas(windowWidth, windowHeight);
-  pixelDensity(1); // Ignores retina displays
   lineLayer = createGraphics(width, height);
   permaLine = createGraphics(width, height);
   tintedBG = createGraphics(width, height);
-  colorMode(HSB, 360, 100, 100, 100);
-  lineLayer.colorMode(HSB, 360, 100, 100, 100);
-  permaLine.colorMode(HSB, 360, 100, 100, 100);
-  dimensionCalc();
   textLayer = createGraphics(windowWidth, windowHeight);
   introLayer = createGraphics(windowWidth, windowHeight);
   introLayer.colorMode(HSB);
@@ -48,10 +47,20 @@ function setup() {
   introLayer.stroke(introHue, 0, 85);
   introLayer.strokeWeight(8);
   introLayer.fill(introHue, 0, 85);
+
+  // initialise all colour informaiton
+  pixelDensity(1); // Ignores retina displays
+  colorMode(HSB, 360, 100, 100, 100);
+  lineLayer.colorMode(HSB, 360, 100, 100, 100);
+  permaLine.colorMode(HSB, 360, 100, 100, 100);
+
+  // initialised dimensions and start intro
+  dimensionCalc();
   slide = 0;
   slideShow();
   makeintroDots();
 
+  // add all event listeners to the canvas
   canvas.addEventListener('touchmove', moved);
   canvas.addEventListener('mousemove', moved);
   canvas.addEventListener('touchstart', touchdown);
@@ -61,6 +70,18 @@ function setup() {
   canvas.addEventListener('mouseup', touchstop);
 
 }
+
+function dimensionCalc() {
+  if (width > height) {
+    circleRad = height * 0.45;
+    vMax = width / 100;
+  } else {
+
+    vMax = height / 100;
+    circleRad = width * 0.45;
+  }
+}
+
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
@@ -80,35 +101,29 @@ function windowResized() {
   }
 }
 
-function dimensionCalc() {
-  wmax = width / 100;
-  hmax = height / 100;
-  if (width > height) {
-    longEdge = width;
-    shortEdge = height;
-    circleRad = shortEdge * 0.45;
-    vMax = width / 100;
-  } else {
-    longEdge = height;
-    shortEdge = width;
-    vMax = height / 100;
-    circleRad = shortEdge * 0.45;
-  }
-}
 
 function stage0grid() {
+
+  let manualArray = [
+    [1, 1, 4, 1, 1, 3, 4, 3, 1, 5, 4, 5, 1, 7, 4, 7],
+    [1, 1, 2, 1, 3, 1, 4, 1, 1, 3, 4, 3, 1, 5, 4, 5, 1, 7, 2, 7, 3, 7, 4, 7],
+    [1, 1, 3, 1, 2, 2, 4, 2, 1, 3, 3, 3, 2, 4, 4, 4, 1, 5, 3, 5, 2, 6, 4, 6, 1, 7, 3, 7, 2, 8, 4, 8]
+  ];
+
   dots = [];
   let w = width / 5;
   let h = height / 9;
   let r = vMax * 2;
-  dotQtyY = stage1array[stage].length / 2;
-  for (let i = 0; i < stage1array[stage].length; i += 2) {
-    dots[dotsCount++] = new Dot(stage1array[stage][i] * w, stage1array[stage][i + 1] * h, r);
+  dotQtyY = manualArray[stage].length / 2;
+  for (let i = 0; i < manualArray[stage].length; i += 2) {
+    dots[dotsCount++] = new Dot(manualArray[stage][i] * w, manualArray[stage][i + 1] * h, r);
   }
 }
 
 function stage1grid() {
+
   dots = [];
+
   if (stage === 3) {
     dotQtyX = 7;
     dotQtyY = 9;
@@ -120,6 +135,7 @@ function stage1grid() {
         dots[dotsCount++] = new Dot((i + 1) * (spaceX), (j + 1) * (spaceY), r);
       }
     }
+
   } else if (stage === 4) {
     dotQtyX = 2;
     dotQtyY = 5 * 4;
@@ -134,6 +150,7 @@ function stage1grid() {
         dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + ((spaceX / 6) * 2), (j + 0.5) * (spaceY) + (spaceY * 2), r);
       }
     }
+
   } else if (stage === 5) {
     dotQtyX = 4;
     dotQtyY = 13 * 4;
@@ -172,11 +189,11 @@ function stage2grid() {
 }
 
 function stage3grid() {
-  let r = longEdge / 100;
+  let r = vMax;
   if (stage === 8) {
     dotQty = 7;
     ringQty = 3;
-    r = longEdge / 150;
+    r = vMax * 0.75;
   }
   for (let i = 0; i < ringQty; i++) {
     for (let j = 0; j < dotQty + (i * 3); j++) {
@@ -191,18 +208,18 @@ function stage3grid() {
 }
 
 function stage4grid() {
-  let r = longEdge / 100;
+  let r = vMax;
   let gap;
   let remainder;
   if (stage === 9) {
     dotQty = 50;
-    r = longEdge / 180;
+    r = vMax * 0.6;
     gap = circleRad * 0.9;
     remainder = circleRad - gap;
   }
   if (stage === 10) {
     dotQty = 100;
-    r = longEdge / 200;
+    r = vMax * 0.5;
     gap = circleRad * 0.7;
     remainder = circleRad - gap;
   }
@@ -343,6 +360,7 @@ function moved(ev) {
 if (!isMousedown) return;
 
 	ev.preventDefault();
+
   if (introState === 3) {
     for (let i = 0; i < dotsCount; i++) {
       dots[i].clicked(winMouseX, winMouseY);
@@ -361,8 +379,8 @@ if (!isMousedown) return;
     introLayer.stroke(introHue, 10+(throughDotCount*4), 100);
     introLayer.fill(introHue, 10+(throughDotCount*4), 100);
 
-    introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 70, 70);
-    if (dist(mouseX, mouseY, xintro[throughDotCount], yintro[throughDotCount]) < 45) {
+    introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 50, 50);
+    if (dist(mouseX, mouseY, xintro[throughDotCount], yintro[throughDotCount]) < 30) {
       let _x = xintro[throughDotCount] + random(-200, 200);
       let y;
       if (direction) {

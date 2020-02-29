@@ -1,5 +1,5 @@
 function writeTextUI() {
-  textSize(longEdge / 50);
+  textSize(vMax*2);
   fill(0);
   noStroke
   colH1 = color(355, 0, 20);
@@ -12,7 +12,7 @@ function writeTextUI() {
 }
 
 function writeRestartUI() {
-  textSize(longEdge / 50);
+  textSize(vMax*2);
   fill(0);
   noStroke();
   nextButton.remove();
