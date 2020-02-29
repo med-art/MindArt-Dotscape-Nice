@@ -410,7 +410,7 @@ function moved(ev) {
     introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 50, 50);
 
     if (dist(mouseX, mouseY, xintro[throughDotCount], yintro[throughDotCount]) < 30) {
-      pop.play();
+      //pop.play();
       let _x = constrain(randomGaussian(width / 2, width / 4), 100, width - 100);
       let _y = constrain(randomGaussian(height / 2, height / 4), 100, height - 100);
       xintro.push(_x);
@@ -479,7 +479,7 @@ class Dot {
       tempwinMouseX = this.x;
       tempwinMouseY = this.y;
       throughDotCount++;
-      pop.play();
+      //pop.play();
       tempOpacity = 20;
       hitRad = 60;
       this.brightness = 250;
