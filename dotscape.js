@@ -12,6 +12,7 @@ let verifyX = 0,
   verifyY = 0;
 let click;
 let vMax, circleRad;
+let rad = 50.0; // animatedRadius
 
 // colour tracking
 let hueDrift, brightDrift, satDrift;
@@ -27,10 +28,15 @@ let xintro = [],
 let direction = 0;
 let introHue = 0;
 
+let expanding = 0;
+let hitRad = 40;
+let tempOpacity = 20;
+
 function preload() {
   bg = loadImage('assets/paper.jpg');
   audio = loadSound('assets/audio.mp3');
   click = loadSound('assets/click.mp3');
+  pop = loadSound('assets/pop.mp3')
 }
 
 function setup() {
@@ -43,7 +49,7 @@ function setup() {
   textLayer = createGraphics(windowWidth, windowHeight);
   introLayer = createGraphics(windowWidth, windowHeight);
   introLayer.colorMode(HSB);
-  introHue = 60*(int(random(0,7)));
+  introHue = 60 * (int(random(0, 7)));
   introLayer.stroke(introHue, 0, 85);
   introLayer.strokeWeight(8);
   introLayer.fill(introHue, 0, 85);
@@ -287,10 +293,16 @@ function nextGrid() {
 }
 
 function draw() {
+
   if (introState === 3) {
     image(tintedBG, 0, 0, width, height);
     image(lineLayer, 0, 0);
     image(permaLine, 0, 0);
+
+    fill(255, tempOpacity--);
+    circle(tempwinMouseX, tempwinMouseY, hitRad++)
+  
+
     for (let i = 0; i < dotsCount; i++) {
       dots[i].show();
     }
@@ -300,8 +312,23 @@ function draw() {
     if (slide > 0) {
       stroke(150);
       strokeWeight(8);
+      // animated circle in the introduction
+      if (expanding) {
+        rad = rad + 0.25;
+      } else {
+        rad = rad - 0.25;
+      }
+      if (rad < 50) {
+        expanding = 1;
+      } else if (rad > 70) {
+        expanding = 0;
+      }
+      circle(xintro[throughDotCount], yintro[throughDotCount], rad)
+
+      // primary introduction layers
       line(xintro[throughDotCount - 1], yintro[throughDotCount - 1], mouseX, mouseY);
       image(introLayer, 0, 0, width, height);
+
     }
     if (slide > 0) {
       textLayer.text(introText[slide - 1], width / 2, (height / 6) * (slide));
@@ -313,7 +340,7 @@ function draw() {
 function touchEnded() {
   if (slide > 0) {
     introLayer.clear();
-      introHue = 60*(int(random(0,7)));
+    introHue = 60 * (int(random(0, 7)));
     introLayer.stroke(introHue, 0, 100);
     introLayer.fill(introHue, 0, 100);
     makeintroDots();
@@ -337,18 +364,18 @@ function touchdown(ev) {
       audio.loop(5);
     }
     if (slide === 0) {
-    startUp();
+      startUp();
     }
   }
-return false;
+  return false;
 }
 
 
-function touchstop(){
+function touchstop() {
   isMousedown = 0;
 }
 
-function startUp(){
+function startUp() {
   click.play();
   startButton.remove();
   slide++;
@@ -357,9 +384,9 @@ function startUp(){
 
 function moved(ev) {
 
-if (!isMousedown) return;
+  if (!isMousedown) return;
 
-	ev.preventDefault();
+  ev.preventDefault();
 
   if (introState === 3) {
     for (let i = 0; i < dotsCount; i++) {
@@ -376,30 +403,14 @@ if (!isMousedown) return;
     }
   } else {
 
-    introLayer.stroke(introHue, 10+(throughDotCount*4), 100);
-    introLayer.fill(introHue, 10+(throughDotCount*4), 100);
-
+    introLayer.stroke(introHue, 10 + (throughDotCount * 4), 100);
+    introLayer.fill(introHue, 10 + (throughDotCount * 4), 100);
     introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 50, 50);
+
     if (dist(mouseX, mouseY, xintro[throughDotCount], yintro[throughDotCount]) < 30) {
-      let _x = xintro[throughDotCount] + random(-200, 200);
-      let y;
-      if (direction) {
-        _y = yintro[throughDotCount] + random(50, 110);
-      } else if (!direction) {
-        _y = yintro[throughDotCount] - random(50, 110);
-      }
-      if (_x < 100) {
-        _x = _x + width / 2;
-      }
-      if (_x > width - 100) {
-        _x = _x - width / 2
-      }
-      if (_y < 100) {
-        direction = !direction;
-      }
-      if (_y > height - 100) {
-        direction = !direction;
-      }
+      pop.play();
+      let _x = constrain(randomGaussian(width / 2, width / 4), 100, width - 100);
+      let _y = constrain(randomGaussian(height / 2, height / 4), 100, height - 100);
       xintro.push(_x);
       yintro.push(_y);
       throughDotCount++;
@@ -415,7 +426,7 @@ if (!isMousedown) return;
 function makeintroDots() {
   xintro[0] = int(random(width / 10, width - (width / 10)));
   yintro[0] = int(height / 2);
-  introLayer.ellipse(xintro[0], yintro[0], 70, 70);
+  introLayer.ellipse(xintro[0], yintro[0], 50, 50);
 }
 
 function copyLine() {
@@ -452,6 +463,7 @@ class Dot {
     }
   }
   clicked(x, y) {
+
     let rMultiplier = 1;
     let d = dist(x, y, this.x, this.y);
     if (throughDotCount === 0) {
@@ -465,6 +477,9 @@ class Dot {
       tempwinMouseX = this.x;
       tempwinMouseY = this.y;
       throughDotCount++;
+      pop.play();
+      tempOpacity = 20;
+      hitRad = 60;
       this.brightness = 250;
       if (colHue != this.h) {
         if (abs(colHue - this.h) > 280) {
