@@ -301,7 +301,7 @@ function draw() {
 
     fill(255, tempOpacity--);
 
-    if (hitRad < 100){
+    if (hitRad < 200){
     circle(tempwinMouseX, tempwinMouseY, hitRad++)
   }
 
