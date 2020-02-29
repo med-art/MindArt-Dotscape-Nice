@@ -23,6 +23,8 @@ let stage1array = [
   [1, 1, 3, 1, 2, 2, 4, 2, 1, 3, 3, 3, 2, 4, 4, 4, 1, 5, 3, 5, 2, 6, 4, 6, 1, 7, 3, 7, 2, 8, 4, 8]
 ];
 
+let introHue = 0;
+
 function preload() {
   bg = loadImage('assets/paper.jpg');
   audio = loadSound('assets/audio.mp3');
@@ -42,9 +44,10 @@ function setup() {
   textLayer = createGraphics(windowWidth, windowHeight);
   introLayer = createGraphics(windowWidth, windowHeight);
   introLayer.colorMode(HSB);
-  introLayer.stroke(0, 0, 85);
-  introLayer.strokeWeight(7);
-  introLayer.fill(0, 0, 85);
+  introHue = 60*(int(random(0,7)));
+  introLayer.stroke(introHue, 0, 85);
+  introLayer.strokeWeight(8);
+  introLayer.fill(introHue, 0, 85);
   slide = 0;
   slideShow();
   makeintroDots();
@@ -279,7 +282,7 @@ function draw() {
     background(205, 12, 64, 100);
     if (slide > 0) {
       stroke(150);
-      strokeWeight(7);
+      strokeWeight(8);
       line(xintro[throughDotCount - 1], yintro[throughDotCount - 1], mouseX, mouseY);
       image(introLayer, 0, 0, width, height);
     }
@@ -293,6 +296,9 @@ function draw() {
 function touchEnded() {
   if (slide > 0) {
     introLayer.clear();
+      introHue = 60*(int(random(0,7)));
+    introLayer.stroke(introHue, 0, 100);
+    introLayer.fill(introHue, 0, 100);
     makeintroDots();
   }
   lineLayer.clear();
@@ -345,14 +351,18 @@ if (!isMousedown) return;
     satDrift = int(random(-2, 2));
     brightDrift = int(random(-2, 2));
     lineLayer.stroke(colHue + hueDrift, colSat + satDrift, colBri + brightDrift, 80);
-    lineLayer.strokeWeight(5);
+    lineLayer.strokeWeight(8);
     lineLayer.clear();
     if (throughDotCount > 0) {
       lineLayer.line(tempwinMouseX, tempwinMouseY, winMouseX, winMouseY);
     }
   } else {
-    introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 40, 40);
-    if (dist(mouseX, mouseY, xintro[throughDotCount], yintro[throughDotCount]) < 30) {
+
+    introLayer.stroke(introHue, 10+(throughDotCount*4), 100);
+    introLayer.fill(introHue, 10+(throughDotCount*4), 100);
+
+    introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 70, 70);
+    if (dist(mouseX, mouseY, xintro[throughDotCount], yintro[throughDotCount]) < 45) {
       let _x = xintro[throughDotCount] + random(-200, 200);
       let y;
       if (direction) {
@@ -387,7 +397,7 @@ if (!isMousedown) return;
 function makeintroDots() {
   xintro[0] = int(random(width / 10, width - (width / 10)));
   yintro[0] = int(height / 2);
-  introLayer.ellipse(xintro[0], yintro[0], 40, 40);
+  introLayer.ellipse(xintro[0], yintro[0], 70, 70);
 }
 
 function copyLine() {
