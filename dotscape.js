@@ -300,8 +300,10 @@ function draw() {
     image(permaLine, 0, 0);
 
     fill(255, tempOpacity--);
+
+    if (hitRad < 100){
     circle(tempwinMouseX, tempwinMouseY, hitRad++)
-  
+  }
 
     for (let i = 0; i < dotsCount; i++) {
       dots[i].show();
