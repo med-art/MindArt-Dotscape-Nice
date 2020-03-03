@@ -14,6 +14,7 @@ let click;
 let vMax, circleRad;
 let rad = 50.0; // animatedRadius
 
+
 // colour tracking
 let hueDrift, brightDrift, satDrift;
 let primaryArray = [360, 60, 240];
@@ -27,14 +28,19 @@ let xintro = [],
   yintro = [];
 let direction = 0;
 let introHue = 0;
+let demoComplete = 0;
+let finger_x = 0;
+let finger_xquad = 0;
 
 let expanding = 0;
 let hitRad = 40;
 let tempOpacity = 20;
 
+
 function preload() {
   bg = loadImage('assets/paper.jpg');
   audio = loadSound('assets/audio.mp3');
+  fingerprint = loadImage('assets/fingerprint.png');
   click = loadSound('assets/click.mp3');
   pop = loadSound('assets/pop.mp3')
 }
@@ -65,6 +71,7 @@ function setup() {
   slide = 0;
   slideShow();
   makeintroDots();
+  finger_x = width * 0.3;
 
   // add all event listeners to the canvas
   canvas.addEventListener('touchmove', moved);
@@ -301,9 +308,9 @@ function draw() {
 
     fill(255, tempOpacity--);
 
-    if (hitRad < 200){
-    circle(tempwinMouseX, tempwinMouseY, hitRad++)
-  }
+    if (hitRad < 200) {
+      circle(tempwinMouseX, tempwinMouseY, hitRad++)
+    }
 
     for (let i = 0; i < dotsCount; i++) {
       dots[i].show();
@@ -312,6 +319,9 @@ function draw() {
     blendMode(BLEND);
     background(205, 12, 64, 100);
     if (slide > 0) {
+
+
+
       stroke(150);
       strokeWeight(8);
       // animated circle in the introduction
@@ -331,6 +341,25 @@ function draw() {
       line(xintro[throughDotCount - 1], yintro[throughDotCount - 1], mouseX, mouseY);
       image(introLayer, 0, 0, width, height);
 
+      if (!demoComplete) {
+
+        let _d = vMax * 10;
+        let _d2 = _d / 2;
+
+
+
+        image(fingerprint, ((((finger_xquad) * width) - _d2) * 0.4) + width * 0.25, height * 0.6 - _d2, _d, _d);
+
+
+        if (finger_x > 100) {
+          finger_x = 0;
+        }
+        finger_x += 0.45;
+
+        finger_xquad = easing(finger_x, 0, 1, 100)
+
+      }
+
     }
     if (slide > 0) {
       textLayer.text(introText[slide - 1], width / 2, (height / 6) * (slide));
@@ -338,6 +367,13 @@ function draw() {
     image(textLayer, 0, 0, width, height);
   }
 }
+
+function easing(t, b, c, d) {
+  t /= d / 2;
+  if (t < 1) return c / 2 * t * t + b;
+  t--;
+  return -c / 2 * (t * (t - 2) - 1) + b;
+};
 
 function touchEnded() {
   if (slide > 0) {
@@ -349,6 +385,7 @@ function touchEnded() {
   }
   lineLayer.clear();
   throughDotCount = 0;
+
 }
 
 function touchdown(ev) {
@@ -411,10 +448,23 @@ function moved(ev) {
 
     if (dist(mouseX, mouseY, xintro[throughDotCount], yintro[throughDotCount]) < 30) {
       //pop.play();
-      let _x = constrain(randomGaussian(width / 2, width / 4), 100, width - 100);
-      let _y = constrain(randomGaussian(height / 2, height / 4), 100, height - 100);
-      xintro.push(_x);
-      yintro.push(_y);
+      if (demoComplete) {
+        let _x = constrain(randomGaussian(width / 2, width / 4), 100, width - 100);
+        let _y = constrain(randomGaussian(height / 2, height / 4), 100, height - 100);
+        xintro.push(_x);
+        yintro.push(_y);
+      } else {
+        let _x = width * 0.7;
+        let _y = height * 0.6;
+        xintro.push(_x);
+        yintro.push(_y);
+        if (throughDotCount > 1) {
+          demoComplete = 1;
+        }
+
+      }
+
+
       throughDotCount++;
       if (throughDotCount > 1) {
         introLayer.background(205, 12, 64, 0.1);
@@ -426,8 +476,13 @@ function moved(ev) {
 }
 
 function makeintroDots() {
-  xintro[0] = int(random(width / 10, width - (width / 10)));
-  yintro[0] = int(height / 2);
+  if (demoComplete) {
+    xintro[0] = int(random(width / 10, width - (width / 10)));
+    yintro[0] = int(random(height / 10, height - (height / 10)));
+  } else {
+    xintro[0] = width * 0.3;
+    yintro[0] = height * 0.6;
+  }
   introLayer.ellipse(xintro[0], yintro[0], 50, 50);
 }
 
@@ -443,18 +498,18 @@ class Dot {
     this.x = x;
     this.y = y;
     this.r = r;
-    this.brightness = 150;
+    // this.brightness = 255;
     this.h = primaryArray[int(random(0, 3))];
     this.s = 0;
-    this.b = random(45, 195);
+    this.b = random(80, 255);
   }
   show() {
     noStroke();
     fill(this.h, this.s, this.b * 0.9, 100);
     ellipse(this.x, this.y, this.r * 3);
-    fill(this.h, this.s, this.b * 0.8, 100);
+    fill(this.h, this.s, this.b * 0.65, 100);
     ellipse(this.x, this.y, this.r * 2.5);
-    fill(this.h, this.s, this.b * 0.7, 100);
+    fill(this.h, this.s, this.b * 0.4, 100);
     ellipse(this.x, this.y, this.r * 2);
   }
   getCol(x, y) {
@@ -482,7 +537,7 @@ class Dot {
       //pop.play();
       tempOpacity = 20;
       hitRad = 60;
-      this.brightness = 250;
+      // this.brightness = 250;
       if (colHue != this.h) {
         if (abs(colHue - this.h) > 280) {
           this.h = (((this.h + colHue) / 2) - 180) % 360;;
