@@ -359,20 +359,23 @@ function draw() {
         circle(_x2, __h, rad);
 
 
+        strokeCap(SQUARE);
 
         // dotted line
-        for (i = 0; i < 50; i++){
-          let l = lerp(_x1, _x2, i/50)
-          let ln = (_x2-_x1)/100;
+        for (i = 0; i < 30; i++){
+          stroke(255);
+          let l = lerp(_x1, _x2, i/30)
+          let ln = (_x2-_x1)/60;
           line(l, __h, l+ln, __h)
-        }
-          strokeCap(SQUARE);
+
+
+          if (i != 0 && i%10 === 0){
           noStroke();
-          fill(50);
-          textSize(2*vMax);
-          textAlign(CENTER, CENTER)
-          text("2",_x2,__h)
-          text("1",_x1,__h)
+          fill(30);
+          triangle(l-(ln), __h-(ln), l-(ln), __h+(ln) ,l+(ln) ,__h);
+        }
+        }
+
           fill(255);
 
         if (finger_x < 100) {
