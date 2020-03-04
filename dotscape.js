@@ -53,10 +53,10 @@ function setup() {
   textLayer = createGraphics(windowWidth, windowHeight);
   introLayer = createGraphics(windowWidth, windowHeight);
   introLayer.colorMode(HSB);
-  introHue = 60 * (int(random(0, 7)));
-  introLayer.stroke(introHue, 0, 85);
+
+  introRGB();
   introLayer.strokeWeight(8);
-  introLayer.fill(introHue, 0, 85);
+
 
   // initialise all colour informaiton
 //  pixelDensity(1); // Ignores retina displays
@@ -69,6 +69,8 @@ function setup() {
   slide = 0;
   slideShow();
   makeintroDots();
+
+
 
 
   // add all event listeners to the canvas
@@ -342,6 +344,8 @@ function draw() {
       } else if (rad > 70) {
         expanding = 0;
       }
+
+
       circle(xintro[throughDotCount], yintro[throughDotCount], rad)
 
       // primary introduction layers
@@ -394,8 +398,6 @@ function draw() {
     image(textLayer, 0, 0, width, height);
   }
 
-// text(canvas.width, width/2, height/2);
-// text(canvas.height, width/2, height/2+100); // DEBUG:
 
 }
 
@@ -406,12 +408,17 @@ function easing(t, b, c, d) {
   return -c / 2 * (t * (t - 2) - 1) + b;
 };
 
+function introRGB(){
+  introHue = primaryArray[int(random(0, 3))];
+  introLayer.stroke(introHue, 0, 100);
+  introLayer.fill(introHue, 0, 100);
+}
+
+
 function touchEnded() {
   if (slide > 0) {
     introLayer.clear();
-    introHue = 60 * (int(random(0, 7)));
-    introLayer.stroke(introHue, 0, 100);
-    introLayer.fill(introHue, 0, 100);
+    introRGB();
     makeintroDots();
   }
   lineLayer.clear();
@@ -473,6 +480,7 @@ function moved(ev) {
     }
   } else {
 
+
     introLayer.stroke(introHue, 10 + (throughDotCount * 4), 100);
     introLayer.fill(introHue, 10 + (throughDotCount * 4), 100);
     introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 50, 50);
@@ -497,10 +505,12 @@ function moved(ev) {
 
 
       throughDotCount++;
+
       if (throughDotCount > 1) {
         introLayer.background(205, 12, 64, 0.1);
         introLayer.line(xintro[throughDotCount - 2], yintro[throughDotCount - 2], xintro[throughDotCount - 1], yintro[throughDotCount - 1]);
       }
+        introRGB();
     }
   }
   return false;
@@ -514,6 +524,7 @@ function makeintroDots() {
     xintro[0] = width * 0.3;
     yintro[0] = height * 0.6;
   }
+  introRGB();
   introLayer.ellipse(xintro[0], yintro[0], 50, 50);
 }
 
