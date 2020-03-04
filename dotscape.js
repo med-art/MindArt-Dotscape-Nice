@@ -370,12 +370,12 @@ function draw() {
           stroke(255);
           let l = lerp(_x1, _x2, i/30)
           let ln = (_x2-_x1)/60;
-          line(l, __h, l+ln, __h)
+          //line(l, __h, l+ln, __h)
 
 
-          if (i != 0 && i%10 === 0){
+          if (i != 0 && i%2 === 0){
           noStroke();
-          fill(30);
+
           triangle(l-(ln), __h-(ln), l-(ln), __h+(ln) ,l+(ln) ,__h);
         }
         }
