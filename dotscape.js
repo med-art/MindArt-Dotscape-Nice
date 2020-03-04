@@ -53,13 +53,11 @@ function setup() {
   textLayer = createGraphics(windowWidth, windowHeight);
   introLayer = createGraphics(windowWidth, windowHeight);
   introLayer.colorMode(HSB);
-
   introRGB();
   introLayer.strokeWeight(8);
 
-
   // initialise all colour informaiton
-//  pixelDensity(1); // Ignores retina displays
+  //  pixelDensity(1); // Ignores retina displays
   colorMode(HSB, 360, 100, 100, 100);
   lineLayer.colorMode(HSB, 360, 100, 100, 100);
   permaLine.colorMode(HSB, 360, 100, 100, 100);
@@ -69,9 +67,6 @@ function setup() {
   slide = 0;
   slideShow();
   makeintroDots();
-
-
-
 
   // add all event listeners to the canvas
   canvas.addEventListener('touchmove', moved);
@@ -100,11 +95,10 @@ function dimensionCalc() {
 
 
 function windowResized() {
-
-setTimeout(resizeDelay, 1000);
+  setTimeout(resizeDelay, 1000);
 }
 
-function resizeDelay(){
+function resizeDelay() {
   resizeCanvas(windowWidth, windowHeight);
   introLayer.resizeCanvas(windowWidth, windowHeight);
   textLayer.resizeCanvas(windowWidth, windowHeight);
@@ -112,7 +106,6 @@ function resizeDelay(){
   permaLine.resizeCanvas(windowWidth, windowHeight);
   tintedBG.resizeCanvas(windowWidth, windowHeight);
   dimensionCalc();
-
   if (introState === 3) {
     removeElements();
     writeTextUI();
@@ -123,15 +116,12 @@ function resizeDelay(){
   }
 }
 
-
 function stage0grid() {
-
   let manualArray = [
     [1, 1, 4, 1, 1, 3, 4, 3, 1, 5, 4, 5, 1, 7, 4, 7],
     [1, 1, 2, 1, 3, 1, 4, 1, 1, 3, 4, 3, 1, 5, 4, 5, 1, 7, 2, 7, 3, 7, 4, 7],
     [1, 1, 3, 1, 2, 2, 4, 2, 1, 3, 3, 3, 2, 4, 4, 4, 1, 5, 3, 5, 2, 6, 4, 6, 1, 7, 3, 7, 2, 8, 4, 8]
   ];
-
   dots = [];
   let w = width / 5;
   let h = height / 9;
@@ -143,9 +133,7 @@ function stage0grid() {
 }
 
 function stage1grid() {
-
   dots = [];
-
   if (stage === 3) {
     dotQtyX = 7;
     dotQtyY = 9;
@@ -314,13 +302,10 @@ function draw() {
     image(tintedBG, 0, 0, width, height);
     image(lineLayer, 0, 0);
     image(permaLine, 0, 0);
-
     fill(255, tempOpacity--);
-
     if (hitRad < 200) {
       circle(tempwinMouseX, tempwinMouseY, hitRad++)
     }
-
     for (let i = 0; i < dotsCount; i++) {
       dots[i].show();
     }
@@ -328,9 +313,6 @@ function draw() {
     blendMode(BLEND);
     background(205, 12, 64, 100);
     if (slide > 0) {
-
-
-
       stroke(150);
       strokeWeight(8);
       // animated circle in the introduction
@@ -344,51 +326,38 @@ function draw() {
       } else if (rad > 70) {
         expanding = 0;
       }
-
-
       circle(xintro[throughDotCount], yintro[throughDotCount], rad)
-
       // primary introduction layers
       line(xintro[throughDotCount - 1], yintro[throughDotCount - 1], mouseX, mouseY);
       image(introLayer, 0, 0, width, height);
 
+      // check to see if the initial line demo is complete, if not, run the demo
       if (!demoComplete) {
-
         let _d = vMax * 10;
         let _d2 = _d / 2;
-        let _x1 = width*0.3;
-        let _x2 = (((finger_xEased) * width) * 0.4)+(width*0.3);
-        let __h = height*0.6;
-
+        let _x1 = width * 0.3;
+        let _x2 = (((finger_xEased) * width) * 0.4) + (width * 0.3);
+        let __h = height * 0.6;
         circle(_x2, __h, rad);
-
-
         strokeCap(SQUARE);
 
         // dotted line
-        for (i = 0; i < 30; i++){
+        for (i = 0; i < 30; i++) {
           stroke(255);
-          let l = lerp(_x1, _x2, i/30)
-          let ln = (_x2-_x1)/60;
-          //line(l, __h, l+ln, __h)
-
-
-          if (i != 0 && i%2 === 0){
-          noStroke();
-
-          triangle(l-(ln), __h-(ln), l-(ln), __h+(ln) ,l+(ln) ,__h);
-        }
+          let l = lerp(_x1, _x2, i / 30)
+          let ln = (_x2 - _x1) / 60; // line length
+          if (i != 0 && i % 2 === 0) { // modulo to skip every nth line
+            noStroke();
+            triangle(l - (ln), __h - (ln), l - (ln), __h + (ln), l + (ln), __h);
+          }
         }
 
-          fill(255);
+        fill(255);
 
         if (finger_x < 100) {
           finger_x += 0.2;
         }
-
-
         finger_xEased = easing(finger_x, 0, 1, 100)
-
       }
 
     }
@@ -408,7 +377,7 @@ function easing(t, b, c, d) {
   return -c / 2 * (t * (t - 2) - 1) + b;
 };
 
-function introRGB(){
+function introRGB() {
   introHue = primaryArray[int(random(0, 3))];
   introLayer.stroke(introHue, 0, 100);
   introLayer.fill(introHue, 0, 100);
@@ -423,7 +392,8 @@ function touchEnded() {
   }
   lineLayer.clear();
   throughDotCount = 0;
-
+  verifyX = 0;
+  verifY = 0;
 }
 
 function touchdown(ev) {
@@ -500,17 +470,14 @@ function moved(ev) {
         if (throughDotCount > 1) {
           demoComplete = 1;
         }
-
       }
-
-
       throughDotCount++;
 
       if (throughDotCount > 1) {
         introLayer.background(205, 12, 64, 0.1);
         introLayer.line(xintro[throughDotCount - 2], yintro[throughDotCount - 2], xintro[throughDotCount - 1], yintro[throughDotCount - 1]);
       }
-        introRGB();
+      introRGB();
     }
   }
   return false;
