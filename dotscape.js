@@ -99,15 +99,16 @@ function dimensionCalc() {
 
 function windowResized() {
 
+setTimeout(resizeDelay, 1000);
+}
+
+function resizeDelay(){
   resizeCanvas(windowWidth, windowHeight);
   introLayer.resizeCanvas(windowWidth, windowHeight);
   textLayer.resizeCanvas(windowWidth, windowHeight);
   lineLayer.resizeCanvas(windowWidth, windowHeight);
   permaLine.resizeCanvas(windowWidth, windowHeight);
   tintedBG.resizeCanvas(windowWidth, windowHeight);
-  permaLine.text("help", width/2, height/2);
-  lineLayer.text("help", width/2, height/2);
-  introLayer.text("help", width/2, height/2);
   dimensionCalc();
 
   if (introState === 3) {
