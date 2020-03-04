@@ -59,7 +59,7 @@ function setup() {
   introLayer.fill(introHue, 0, 85);
 
   // initialise all colour informaiton
-  pixelDensity(1); // Ignores retina displays
+//  pixelDensity(1); // Ignores retina displays
   colorMode(HSB, 360, 100, 100, 100);
   lineLayer.colorMode(HSB, 360, 100, 100, 100);
   permaLine.colorMode(HSB, 360, 100, 100, 100);
@@ -371,7 +371,8 @@ function draw() {
     image(textLayer, 0, 0, width, height);
   }
 
-text(canvas.height, width/2, height/2);
+text(canvas.width, width/2, height/2);
+text(canvas.height, width/2, height/2+100);
 
 }
 
