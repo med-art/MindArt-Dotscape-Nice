@@ -106,6 +106,7 @@ function windowResized() {
   permaLine.resizeCanvas(windowWidth, windowHeight);
   tintedBG.resizeCanvas(windowWidth, windowHeight);
   dimensionCalc();
+
   if (introState === 3) {
     removeElements();
     writeTextUI();
