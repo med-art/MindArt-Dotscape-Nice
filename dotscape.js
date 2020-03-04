@@ -29,7 +29,7 @@ let direction = 0;
 let introHue = 0;
 let demoComplete = 0;
 let finger_x = 0;
-let finger_xquad = 0;
+let finger_xEased = 0;
 let expanding = 0;
 let hitRad = 40;
 let tempOpacity = 20;
@@ -69,7 +69,7 @@ function setup() {
   slide = 0;
   slideShow();
   makeintroDots();
-  finger_x = width * 0.3;
+
 
   // add all event listeners to the canvas
   canvas.addEventListener('touchmove', moved);
@@ -352,15 +352,35 @@ function draw() {
 
         let _d = vMax * 10;
         let _d2 = _d / 2;
+        let _x1 = width*0.3;
+        let _x2 = (((finger_xEased) * width) * 0.4)+(width*0.3);
+        let __h = height*0.6;
 
-        image(fingerprint, ((((finger_xquad) * width) - _d2) * 0.4) + width * 0.25, height * 0.6 - _d2, _d, _d);
+        circle(_x2, __h, rad);
 
-        if (finger_x > 100) {
-          finger_x = 0;
+
+
+        // dotted line
+        for (i = 0; i < 50; i++){
+          let l = lerp(_x1, _x2, i/50)
+          let ln = (_x2-_x1)/100;
+          line(l, __h, l+ln, __h)
         }
-        finger_x += 0.45;
+          strokeCap(SQUARE);
+          noStroke();
+          fill(50);
+          textSize(2*vMax);
+          textAlign(CENTER, CENTER)
+          text("2",_x2,__h)
+          text("1",_x1,__h)
+          fill(255);
 
-        finger_xquad = easing(finger_x, 0, 1, 100)
+        if (finger_x < 100) {
+          finger_x += 0.2;
+        }
+
+
+        finger_xEased = easing(finger_x, 0, 1, 100)
 
       }
 
