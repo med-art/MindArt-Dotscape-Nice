@@ -384,17 +384,7 @@ function introRGB() {
 }
 
 
-function touchEnded() {
-  if (slide > 0) {
-    introLayer.clear();
-    introRGB();
-    makeintroDots();
-  }
-  lineLayer.clear();
-  throughDotCount = 0;
-  verifyX = 0;
-  verifY = 0;
-}
+
 
 function touchdown(ev) {
 
@@ -420,6 +410,16 @@ function touchdown(ev) {
 
 function touchstop() {
   isMousedown = 0;
+
+  if (slide > 0) {
+    introLayer.clear();
+    introRGB();
+    makeintroDots();
+  }
+  lineLayer.clear();
+  throughDotCount = 0;
+  verifyX = 0;
+  verifY = 0;
 }
 
 function startUp() {
