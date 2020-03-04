@@ -370,6 +370,9 @@ function draw() {
     }
     image(textLayer, 0, 0, width, height);
   }
+
+text(canvas.width, width/2, height/2);
+
 }
 
 function easing(t, b, c, d) {
