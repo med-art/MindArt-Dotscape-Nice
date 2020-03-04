@@ -418,8 +418,8 @@ function touchstop() {
   }
   lineLayer.clear();
   throughDotCount = 0;
-  verifyX = 0;
-  verifY = 0;
+  // verifyX = 0;
+  // verifY = 0;
 }
 
 function startUp() {
