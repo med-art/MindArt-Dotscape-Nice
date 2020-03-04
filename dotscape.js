@@ -346,7 +346,7 @@ function draw() {
           stroke(255);
           let l = lerp(_x1, _x2, i / 30)
           let ln = (_x2 - _x1) / 60; // line length
-          if (i != 0 && i % 2 === 0) { // modulo to skip every nth line
+          if (i != 0 && i % 4 === 0) { // modulo to skip every nth line
             noStroke();
             triangle(l - (ln), __h - (ln), l - (ln), __h + (ln), l + (ln), __h);
           }
@@ -355,7 +355,7 @@ function draw() {
         fill(255);
 
         if (finger_x < 100) {
-          finger_x += 0.2;
+          finger_x += 0.4;
         }
         finger_xEased = easing(finger_x, 0, 1, 100)
       }
@@ -451,8 +451,8 @@ function moved(ev) {
   } else {
 
 
-    introLayer.stroke(introHue, 10 + (throughDotCount * 4), 100);
-    introLayer.fill(introHue, 10 + (throughDotCount * 4), 100);
+    introLayer.stroke(introHue, 40 + (throughDotCount * 3), 100);
+    introLayer.fill(introHue, 40 + (throughDotCount * 3), 100);
     introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 50, 50);
 
     if (dist(mouseX, mouseY, xintro[throughDotCount], yintro[throughDotCount]) < 30) {
