@@ -14,7 +14,6 @@ let click;
 let vMax, circleRad;
 let rad = 50.0; // animatedRadius
 
-
 // colour tracking
 let hueDrift, brightDrift, satDrift;
 let primaryArray = [360, 60, 240];
@@ -31,7 +30,6 @@ let introHue = 0;
 let demoComplete = 0;
 let finger_x = 0;
 let finger_xquad = 0;
-
 let expanding = 0;
 let hitRad = 40;
 let tempOpacity = 20;
@@ -81,6 +79,9 @@ function setup() {
   canvas.addEventListener('touchend', touchstop);
   canvas.addEventListener('touchleave', touchstop);
   canvas.addEventListener('mouseup', touchstop);
+  canvas.addEventListener('mouseup', touchstop);
+  // canvas.addEventListener('orientationchange', resizeWindow);
+  // canvas.addEventListener('resize', resizeWindow);
 
 }
 
@@ -97,6 +98,7 @@ function dimensionCalc() {
 
 
 function windowResized() {
+  console.log("resized");
   resizeCanvas(windowWidth, windowHeight);
   introLayer.resizeCanvas(windowWidth, windowHeight);
   textLayer.resizeCanvas(windowWidth, windowHeight);
@@ -346,10 +348,7 @@ function draw() {
         let _d = vMax * 10;
         let _d2 = _d / 2;
 
-
-
         image(fingerprint, ((((finger_xquad) * width) - _d2) * 0.4) + width * 0.25, height * 0.6 - _d2, _d, _d);
-
 
         if (finger_x > 100) {
           finger_x = 0;
