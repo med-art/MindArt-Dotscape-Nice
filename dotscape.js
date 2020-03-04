@@ -371,8 +371,8 @@ function draw() {
     image(textLayer, 0, 0, width, height);
   }
 
-text(canvas.width, width/2, height/2);
-text(canvas.height, width/2, height/2+100);
+// text(canvas.width, width/2, height/2);
+// text(canvas.height, width/2, height/2+100); // DEBUG:
 
 }
 
