@@ -398,7 +398,7 @@ function touchdown(ev) {
   }
   if (introState < 3) {
     if (audio.isPlaying()) {} else {
-      audio.loop(5);
+      audio.loop(19);
     }
     if (slide === 0) {
       startUp();
