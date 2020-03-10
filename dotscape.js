@@ -72,14 +72,14 @@ function setup() {
   intro_X = width * 0.30;
 
   // add all event listeners to the canvas
-  canvas.addEventListener('touchmove', moved, {passive: true});
-  canvas.addEventListener('mousemove', moved, {passive: true});
-  canvas.addEventListener('touchstart', touchdown,{passive: true});
-  canvas.addEventListener('mousedown', touchdown, {passive: true});
-  canvas.addEventListener('touchend', touchstop, {passive: true});
-  canvas.addEventListener('touchleave', touchstop, {passive: true});
-  canvas.addEventListener('mouseup', touchstop, {passive: true});
-  canvas.addEventListener('mouseup', touchstop, {passive: true});
+  canvas.addEventListener('touchmove', moved);
+  canvas.addEventListener('mousemove', moved);
+  canvas.addEventListener('touchstart', touchdown);
+  canvas.addEventListener('mousedown', touchdown);
+  canvas.addEventListener('touchend', touchstop);
+  canvas.addEventListener('touchleave', touchstop);
+  canvas.addEventListener('mouseup', touchstop);
+  canvas.addEventListener('mouseup', touchstop);
   // canvas.addEventListener('orientationchange', resizeWindow);
   // canvas.addEventListener('resize', resizeWindow);
 
