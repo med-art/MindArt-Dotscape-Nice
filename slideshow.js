@@ -1,4 +1,4 @@
-let introText = ["Touchez", "Dessinez", "Regardez", "Ecoutez"];
+let introText = ["Touchez et Ecoutez", "Regardez", "Dessinez"];
 let appCol = "#f1b300";
 let slide = 4;
 let delayTime = 12000;
@@ -8,7 +8,7 @@ function slideShow() {
   if (slide === 0) {
     startButton = createButton(introText[0]);
     startButton.class("startButton");
-    startButton.position((width / 2) - (12 * vMax), (height / 2) - (4 * vMax));
+    startButton.position((width / 2) - (20 * vMax), (height / 2) - (4 * vMax));
     startButton.mousePressed(startUp);
   }
   if (slide === introText.length) {
@@ -26,7 +26,7 @@ function slideShow() {
     textLayer.rectMode(CENTER);
     if (slide > 0) {
       if (slide === introText.length - 1) {
-        delayTime = 12000;
+        delayTime = 20000;
       }
       slide++;
       setTimeout(slideShow, delayTime);

@@ -27,12 +27,14 @@ let xintro = [],
   yintro = [];
 let direction = 0;
 let introHue = 0;
-let demoComplete = 0;
+let demoStage = 0;
 let finger_x = 0;
 let finger_xEased = 0;
 let expanding = 0;
 let hitRad = 40;
 let tempOpacity = 20;
+let intro_X = 0; // used for colour dots
+let cycle_count = 0;
 
 
 function preload() {
@@ -67,16 +69,17 @@ function setup() {
   slide = 0;
   slideShow();
   makeintroDots();
+  intro_X = width * 0.30;
 
   // add all event listeners to the canvas
-  canvas.addEventListener('touchmove', moved);
-  canvas.addEventListener('mousemove', moved);
-  canvas.addEventListener('touchstart', touchdown);
-  canvas.addEventListener('mousedown', touchdown);
-  canvas.addEventListener('touchend', touchstop);
-  canvas.addEventListener('touchleave', touchstop);
-  canvas.addEventListener('mouseup', touchstop);
-  canvas.addEventListener('mouseup', touchstop);
+  canvas.addEventListener('touchmove', moved, {passive: true});
+  canvas.addEventListener('mousemove', moved, {passive: true});
+  canvas.addEventListener('touchstart', touchdown,{passive: true});
+  canvas.addEventListener('mousedown', touchdown, {passive: true});
+  canvas.addEventListener('touchend', touchstop, {passive: true});
+  canvas.addEventListener('touchleave', touchstop, {passive: true});
+  canvas.addEventListener('mouseup', touchstop, {passive: true});
+  canvas.addEventListener('mouseup', touchstop, {passive: true});
   // canvas.addEventListener('orientationchange', resizeWindow);
   // canvas.addEventListener('resize', resizeWindow);
 
@@ -298,7 +301,7 @@ function nextGrid() {
 
 function draw() {
 
-  if (introState === 3) {
+    if (introState === 3) {
     image(tintedBG, 0, 0, width, height);
     image(lineLayer, 0, 0);
     image(permaLine, 0, 0);
@@ -332,7 +335,7 @@ function draw() {
       image(introLayer, 0, 0, width, height);
 
       // check to see if the initial line demo is complete, if not, run the demo
-      if (!demoComplete) {
+      if (demoStage === 0 || demoStage === 1) {
         let _d = vMax * 10;
         let _d2 = _d / 2;
         let _x1 = width * 0.3;
@@ -355,10 +358,41 @@ function draw() {
         fill(255);
 
         if (finger_x < 100) {
-          finger_x += 0.4;
+          finger_x += 0.6;
         }
+
+        if (finger_x > 99) {
+          demoStage = 1;
+        }
+
+
         finger_xEased = easing(finger_x, 0, 1, 100)
       }
+
+      if (demoStage === 1 && cycle_count < 3) {
+        fill(0, 30, 100);
+        stroke(0, 30, 100);
+        circle(width * 0.30, height * 0.6, 50, 50);
+
+        if (intro_X < (width*0.70) + 25){
+          line(width * 0.30, height * 0.6, intro_X, height * 0.6);
+        }
+
+        intro_X+=3;
+
+        if (intro_X > (width*0.70)-25){
+        circle(width * 0.70, height * 0.6, 50, 50);
+        line(width * 0.30, height * 0.6, width * 0.70, height * 0.6);
+        }
+
+        if (intro_X >= (width * 0.70)+100) {
+          intro_X = width * 0.30;
+          cycle_count++;
+        }
+      }
+      fill(255);
+
+
 
     }
     if (slide > 0) {
@@ -398,7 +432,7 @@ function touchdown(ev) {
   }
   if (introState < 3) {
     if (audio.isPlaying()) {} else {
-      audio.loop(19);
+      audio.loop(0);
     }
     if (slide === 0) {
       startUp();
@@ -450,41 +484,47 @@ function moved(ev) {
     }
   } else {
 
-
-    introLayer.stroke(introHue, 40 + (throughDotCount * 3), 100);
-    introLayer.fill(introHue, 40 + (throughDotCount * 3), 100);
-    introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 50, 50);
-
-    if (dist(mouseX, mouseY, xintro[throughDotCount], yintro[throughDotCount]) < 30) {
-      //pop.play();
-      if (demoComplete) {
-        let _x = constrain(randomGaussian(width / 2, width / 4), 100, width - 100);
-        let _y = constrain(randomGaussian(height / 2, height / 4), 100, height - 100);
-        xintro.push(_x);
-        yintro.push(_y);
-      } else {
-        let _x = width * 0.7;
-        let _y = height * 0.6;
-        xintro.push(_x);
-        yintro.push(_y);
-        if (throughDotCount > 1) {
-          demoComplete = 1;
-        }
-      }
-      throughDotCount++;
-
-      if (throughDotCount > 1) {
-        introLayer.background(205, 12, 64, 0.1);
-        introLayer.line(xintro[throughDotCount - 2], yintro[throughDotCount - 2], xintro[throughDotCount - 1], yintro[throughDotCount - 1]);
-      }
-      introRGB();
-    }
+    introSlideshow(mouseX, mouseY);
   }
   return false;
 }
 
+function introSlideshow(__x, __y) {
+
+  introLayer.stroke(introHue, 40 + (throughDotCount * 3), 100);
+  introLayer.fill(introHue, 40 + (throughDotCount * 3), 100);
+  introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 50, 50);
+
+  if (dist(__x, __y, xintro[throughDotCount], yintro[throughDotCount]) < 30) {
+    //pop.play();
+    if (demoStage === 2) {
+      let _x = constrain(randomGaussian(width / 2, width / 4), 100, width - 100);
+      let _y = constrain(randomGaussian(height / 2, height / 4), 100, height - 100);
+      xintro.push(_x);
+      yintro.push(_y);
+    } else {
+      let _x = width * 0.7;
+      let _y = height * 0.6;
+      xintro.push(_x);
+      yintro.push(_y);
+
+    }
+    if (throughDotCount > 0) {
+      demoStage = 2;
+    }
+
+    throughDotCount++;
+
+    if (throughDotCount > 1) {
+      introLayer.background(205, 12, 64, 0.1);
+      introLayer.line(xintro[throughDotCount - 2], yintro[throughDotCount - 2], xintro[throughDotCount - 1], yintro[throughDotCount - 1]);
+    }
+    introRGB();
+  }
+}
+
 function makeintroDots() {
-  if (demoComplete) {
+  if (demoStage === 2) {
     xintro[0] = int(random(width / 10, width - (width / 10)));
     yintro[0] = int(random(height / 10, height - (height / 10)));
   } else {
