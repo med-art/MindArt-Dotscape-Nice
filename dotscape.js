@@ -319,9 +319,9 @@ function draw() {
       strokeWeight(8);
       // animated circle in the introduction
       if (expanding) {
-        rad = rad + 0.25;
+        rad = rad + 0.1;
       } else {
-        rad = rad - 0.25;
+        rad = rad - 0.1;
       }
       if (rad < 50) {
         expanding = 1;
@@ -366,14 +366,15 @@ function draw() {
       }
 
       // make a demonstation drawing over the guide dots
-      if (demoStage === 1 && cycle_count < 3) {
+      if (demoStage === 1 && cycle_count < 2) {
         fill(0, 30, 100);
         stroke(0, 30, 100);
         circle(width * 0.30, height * 0.5, 50, 50);
         if (intro_X < (width * 0.70) + 25) {
           line(width * 0.30, height * 0.5, intro_X, height * 0.5);
         }
-        intro_X += 2.4;
+        intro_X += 1.9;
+
         if (intro_X > (width * 0.70) - 25) {
           circle(width * 0.70, height * 0.5, 50, 50);
           line(width * 0.30, height * 0.5, width * 0.70, height * 0.5);
