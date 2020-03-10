@@ -340,7 +340,7 @@ function draw() {
         let _d2 = _d / 2;
         let _x1 = width * 0.3;
         let _x2 = (((finger_xEased) * width) * 0.4) + (width * 0.3);
-        let __h = height * 0.6;
+        let __h = height * 0.5;
         circle(_x2, __h, rad);
         strokeCap(SQUARE);
 
@@ -372,17 +372,17 @@ function draw() {
       if (demoStage === 1 && cycle_count < 3) {
         fill(0, 30, 100);
         stroke(0, 30, 100);
-        circle(width * 0.30, height * 0.6, 50, 50);
+        circle(width * 0.30, height * 0.5, 50, 50);
 
         if (intro_X < (width*0.70) + 25){
-          line(width * 0.30, height * 0.6, intro_X, height * 0.6);
+          line(width * 0.30, height * 0.5, intro_X, height * 0.5);
         }
 
-        intro_X+=3;
+        intro_X+=2.5;
 
         if (intro_X > (width*0.70)-25){
-        circle(width * 0.70, height * 0.6, 50, 50);
-        line(width * 0.30, height * 0.6, width * 0.70, height * 0.6);
+        circle(width * 0.70, height * 0.5, 50, 50);
+        line(width * 0.30, height * 0.5, width * 0.70, height * 0.5);
         }
 
         if (intro_X >= (width * 0.70)+100) {
@@ -396,7 +396,7 @@ function draw() {
 
     }
     if (slide > 0) {
-      textLayer.text(introText[slide - 1], width / 2, (height / 6) * (slide));
+      textLayer.text(introText[slide - 1], width / 2, (height / 3) * (slide - 1));
     }
     image(textLayer, 0, 0, width, height);
   }
@@ -504,7 +504,7 @@ function introSlideshow(__x, __y) {
       yintro.push(_y);
     } else {
       let _x = width * 0.7;
-      let _y = height * 0.6;
+      let _y = height * 0.5;
       xintro.push(_x);
       yintro.push(_y);
 
@@ -529,7 +529,7 @@ function makeintroDots() {
     yintro[0] = int(random(height / 10, height - (height / 10)));
   } else {
     xintro[0] = width * 0.3;
-    yintro[0] = height * 0.6;
+    yintro[0] = height * 0.5;
   }
   introRGB();
   introLayer.ellipse(xintro[0], yintro[0], 50, 50);
