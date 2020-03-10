@@ -300,8 +300,7 @@ function nextGrid() {
 }
 
 function draw() {
-
-    if (introState === 3) {
+  if (introState === 3) {
     image(tintedBG, 0, 0, width, height);
     image(lineLayer, 0, 0);
     image(permaLine, 0, 0);
@@ -354,54 +353,44 @@ function draw() {
             triangle(l - (ln), __h - (ln), l - (ln), __h + (ln), l + (ln), __h);
           }
         }
-
         fill(255);
 
         if (finger_x < 100) {
-          finger_x += 0.6;
+          finger_x += 0.4;
         }
 
         if (finger_x > 99) {
           demoStage = 1;
         }
-
-
         finger_xEased = easing(finger_x, 0, 1, 100)
       }
 
+      // make a demonstation drawing over the guide dots
       if (demoStage === 1 && cycle_count < 3) {
         fill(0, 30, 100);
         stroke(0, 30, 100);
         circle(width * 0.30, height * 0.5, 50, 50);
-
-        if (intro_X < (width*0.70) + 25){
+        if (intro_X < (width * 0.70) + 25) {
           line(width * 0.30, height * 0.5, intro_X, height * 0.5);
         }
-
-        intro_X+=2.5;
-
-        if (intro_X > (width*0.70)-25){
-        circle(width * 0.70, height * 0.5, 50, 50);
-        line(width * 0.30, height * 0.5, width * 0.70, height * 0.5);
+        intro_X += 2.4;
+        if (intro_X > (width * 0.70) - 25) {
+          circle(width * 0.70, height * 0.5, 50, 50);
+          line(width * 0.30, height * 0.5, width * 0.70, height * 0.5);
         }
-
-        if (intro_X >= (width * 0.70)+100) {
+        if (intro_X >= (width * 0.70) + 100) {
           intro_X = width * 0.30;
           cycle_count++;
         }
       }
       fill(255);
-
-
-
     }
+
     if (slide > 0) {
       textLayer.text(introText[slide - 1], width / 2, (height / 3) * (slide - 1));
     }
     image(textLayer, 0, 0, width, height);
   }
-
-
 }
 
 function easing(t, b, c, d) {
@@ -409,16 +398,13 @@ function easing(t, b, c, d) {
   if (t < 1) return c / 2 * t * t + b;
   t--;
   return -c / 2 * (t * (t - 2) - 1) + b;
-};
+}
 
 function introRGB() {
   introHue = primaryArray[int(random(0, 3))];
   introLayer.stroke(introHue, 0, 100);
   introLayer.fill(introHue, 0, 100);
 }
-
-
-
 
 function touchdown(ev) {
 
@@ -460,6 +446,8 @@ function startUp() {
   click.play();
   startButton.remove();
   slide++;
+  //BUG, infinite loop potential..
+  touchdown();
   slideShow();
 }
 

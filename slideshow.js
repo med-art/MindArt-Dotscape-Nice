@@ -1,7 +1,7 @@
 let introText = ["Touchez et Ecoutez", "Regardez", "Dessinez"];
 let appCol = "#f1b300";
 let slide = 4;
-let delayTime = 12000;
+let delayTime = 15000;
 let introState = 0;
 
 function slideShow() {
@@ -21,7 +21,7 @@ function slideShow() {
   } else if (slide < introText.length && slide > 0) {
     textLayer.clear();
     textLayer.fill(255, 5);
-    textLayer.textSize(vMax * 8);
+    textLayer.textSize(vMax * 7);
     textLayer.textAlign(CENTER, CENTER);
     textLayer.rectMode(CENTER);
     if (slide > 0) {

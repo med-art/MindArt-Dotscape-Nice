@@ -1,28 +1,8 @@
-<!DOCTYPE html>
-<html manifest="offline.manifest">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<meta content="yes" name="apple-mobile-web-app-capable">
-	<link rel="icon" href="favicon.ico" />
-	<link rel="apple-touch-icon" href="favicon.png" />
-	<title>Apple Pencil Test</title>
-	<style>
-
-
-		canvas { margin: 0; padding: 0; border:0; background-color: #FFFACD; }
-		input { font-size: 1.5em; padding: 0.2em; }
-		button { font-size: 1.5em; padding: 0.2em; }
-	</style>
-	<script>
-
 	function get (id) {
 		return document.getElementById(id);
 	}
 
-
 	Pencil = {version: "2018.09.19a", lineWidthMulti: 8 }; // I assume this is a form of delcaring an HTML element
-
 
 	Pencil.init = function ()
 	{
@@ -30,7 +10,6 @@
 		// disable android back button
 		window.history.pushState({}, '');
 		window.addEventListener('popstate', function() { window.history.pushState({}, '')})
-
 		get("version").innerHTML = "version "+Pencil.version; // updates the Pencil version UI.
 		Pencil.lineWidth = 0;
 		Pencil.isMousedown = false; // ??
