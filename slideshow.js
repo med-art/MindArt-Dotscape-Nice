@@ -1,7 +1,7 @@
 let introText = ["Touchez et Ecoutez", "Regardez", "Dessinez"];
 let appCol = "#f1b300";
 let slide = 4;
-let delayTime = 15000;
+let delayTime = 18000;
 let introState = 0;
 
 function slideShow() {

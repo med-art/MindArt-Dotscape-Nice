@@ -69,7 +69,7 @@ function setup() {
   slide = 0;
   slideShow();
   makeintroDots();
-  intro_X = width * 0.30;
+  intro_X = (width * 0.30)-100;
 
   // add all event listeners to the canvas
   canvas.addEventListener('touchmove', moved);
@@ -356,7 +356,7 @@ function draw() {
         fill(255);
 
         if (finger_x < 100) {
-          finger_x += 0.4;
+          finger_x += 0.32;
         }
 
         if (finger_x > 99) {
@@ -370,17 +370,17 @@ function draw() {
         fill(0, 30, 100);
         stroke(0, 30, 100);
         circle(width * 0.30, height * 0.5, 50, 50);
-        if (intro_X < (width * 0.70) + 25) {
+        if (intro_X > width*0.30 && intro_X < (width * 0.70) + 25) {
           line(width * 0.30, height * 0.5, intro_X, height * 0.5);
         }
-        intro_X += 1.9;
+        intro_X += 1.7;
 
         if (intro_X > (width * 0.70) - 25) {
           circle(width * 0.70, height * 0.5, 50, 50);
           line(width * 0.30, height * 0.5, width * 0.70, height * 0.5);
         }
         if (intro_X >= (width * 0.70) + 100) {
-          intro_X = width * 0.30;
+          intro_X = (width*0.30)-100;
           cycle_count++;
         }
       }
