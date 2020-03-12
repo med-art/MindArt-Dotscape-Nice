@@ -47,11 +47,12 @@ transform: translate(-50%, -50%);
   background-color: #4e4e4e;
   color: white;
   border-width: 3;
-
   border-radius: 0.7vmax;
   width: 12vmax;
   height: 3vmax;
   touch-action: none;
+  font-size: 1.5vmax;
+  height: 5vmax;
 
 }
 

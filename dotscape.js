@@ -1,66 +1,69 @@
+// stages are used to track each set of dots
 let stage = 0;
 
 // dot tracking
-let dots = [];
-let throughDotCount = 0;
-let dotSize, dotQty, ringQty;
+let dots = [],
+  throughDotCount = 0,
+  dotSize, dotQty, ringQty;
 
 // mouse/geometry tracking
-let isMousedown;
-let tempwinMouseX, tempwinMouseY, tempwinMouseX2, tempwinMouseY2; // defaults
-let verifyX = 0,
-  verifyY = 0;
-let click;
-let vMax, circleRad;
-let rad = 50.0; // animatedRadius
+let isMousedown, tempwinMouseX, tempwinMouseY, tempwinMouseX2, tempwinMouseY2,
+  verifyX = 0,
+  verifyY = 0,
+  vMax, circleRad,
+  rad = 50.0; // animatedRadius
 
 // colour tracking
-let hueDrift, brightDrift, satDrift;
-let primaryArray = [360, 60, 240];
-let colHue = 360,
+let hueDrift, brightDrift, satDrift,
+  primaryArray = [360, 60, 240], // RGB in HSB terms
+  colHue = 360,
   colSat = 100,
-  colBri = 100;
-let tintedBG;
+  colBri = 100,
+  tintedBG, appCol;
 
 // intro tracking
 let xintro = [],
-  yintro = [];
-let direction = 0;
-let introHue = 0;
-let demoStage = 0;
-let finger_x = 0;
-let finger_xEased = 0;
-let expanding = 0;
-let hitRad = 40;
-let tempOpacity = 20;
-let intro_X = 0; // used for colour dots
-let cycle_count = 0;
+  yintro = [],
+  direction = 0,
+  introHue = 0,
+  demoStage = 0,
+  finger_x = 0,
+  finger_xEased = 0,
+  expansion = 0.1,
+  hitRad = 40,
+  tempOpacity = 20,
+  intro_X = 0, // used for colour dots
+  cycle_count = 0;
+
+// intro and UI tracking
+let introText = ["Touchez et Ecoutez", "Regardez", "Dessinez"],
+  slide = 4,
+  delayTime = 15000,
+  introComplete = 0;
 
 
 function preload() {
   bg = loadImage('assets/paper.jpg');
   audio = loadSound('assets/audio.mp3');
-  fingerprint = loadImage('assets/fingerprint.png');
   click = loadSound('assets/click.mp3');
-  pop = loadSound('assets/pop.mp3')
 }
 
 function setup() {
-
   // create canvas and all layers
   createCanvas(windowWidth, windowHeight);
   lineLayer = createGraphics(width, height);
   permaLine = createGraphics(width, height);
   tintedBG = createGraphics(width, height);
-  textLayer = createGraphics(windowWidth, windowHeight);
-  introLayer = createGraphics(windowWidth, windowHeight);
-  introLayer.colorMode(HSB);
-  introRGB();
-  introLayer.strokeWeight(8);
+  textLayer = createGraphics(width, height);
+  introLayer = createGraphics(width, height);
 
   // initialise all colour informaiton
-  //  pixelDensity(1); // Ignores retina displays
+  pixelDensity(1); // Ignores retina displays
   colorMode(HSB, 360, 100, 100, 100);
+  appCol = color(205, 12, 64, 0.1);
+  introLayer.colorMode(HSB, 360, 100, 100, 100);
+  randomIntroColour();
+  introLayer.strokeWeight(8);
   lineLayer.colorMode(HSB, 360, 100, 100, 100);
   permaLine.colorMode(HSB, 360, 100, 100, 100);
 
@@ -69,7 +72,7 @@ function setup() {
   slide = 0;
   slideShow();
   makeintroDots();
-  intro_X = (width * 0.30)-100;
+  intro_X = (width * 0.30) - 100;
 
   // add all event listeners to the canvas
   canvas.addEventListener('touchmove', moved);
@@ -85,23 +88,18 @@ function setup() {
 
 }
 
+// calcuate Dimensions for use in this sketch, done during initialise and resize.
 function dimensionCalc() {
   if (width > height) {
-    circleRad = height * 0.45;
     vMax = width / 100;
+    circleRad = height * 0.45;
   } else {
-
     vMax = height / 100;
     circleRad = width * 0.45;
   }
 }
 
-
 function windowResized() {
-  setTimeout(resizeDelay, 1000);
-}
-
-function resizeDelay() {
   resizeCanvas(windowWidth, windowHeight);
   introLayer.resizeCanvas(windowWidth, windowHeight);
   textLayer.resizeCanvas(windowWidth, windowHeight);
@@ -109,14 +107,186 @@ function resizeDelay() {
   permaLine.resizeCanvas(windowWidth, windowHeight);
   tintedBG.resizeCanvas(windowWidth, windowHeight);
   dimensionCalc();
-  if (introState === 3) {
+  if (introComplete) {
     removeElements();
     writeTextUI();
     stage--;
-    nextGrid();
-  } else if (introState < 3 && slide > 0) {
+    nextDrawing();
+  } else if (!introComplete && slide > 0) {
     makeintroDots();
   }
+}
+
+function draw() {
+  if (!introComplete) {
+    introAnimation();
+  } else {
+    image(tintedBG, 0, 0, width, height);
+    image(lineLayer, 0, 0);
+    image(permaLine, 0, 0);
+    fill(255, tempOpacity--);
+    // small animation that fires when dot is selected
+    if (hitRad < 200) {
+      circle(tempwinMouseX, tempwinMouseY, hitRad++);
+    }
+    // show all dots under this stage
+    for (let i = 0; i < dotsCount; i++) {
+      dots[i].show();
+    }
+  }
+}
+
+
+function touchdown(ev) {
+  isMousedown = 1;
+  if (introComplete) {
+    for (let i = 0; i < dotsCount; i++) {
+      let _x = winMouseX;
+      let _y = winMouseY;
+      dots[i].getCol(_x, _y);
+      dots[i].clicked(_y, _y);
+    }
+  } else if (!introComplete) {
+    if (slide === 0) {
+      startUp();
+    }
+  }
+  return false;
+}
+
+function touchstop() {
+  isMousedown = 0;
+  if (slide > 0) {
+    introLayer.clear();
+    randomIntroColour();
+    makeintroDots();
+  }
+  lineLayer.clear();
+  throughDotCount = 0;
+}
+
+function startUp() {
+  if (audio.isPlaying()) {} else {
+    audio.loop(0);
+  }
+  click.play();
+  startButton.remove();
+  slide++;
+  slideShow();
+}
+
+function moved(ev) {
+
+  if (!isMousedown) return;
+  ev.preventDefault();
+
+  if (introComplete) {
+    for (let i = 0; i < dotsCount; i++) {
+      dots[i].clicked(winMouseX, winMouseY);
+    }
+    lineLayer.stroke(colHue, colSat, colBri, 80);
+    lineLayer.strokeWeight(8);
+    lineLayer.clear();
+    if (throughDotCount > 0) {
+      lineLayer.line(tempwinMouseX, tempwinMouseY, winMouseX, winMouseY);
+    }
+  } else {
+    introSlideshow(mouseX, mouseY);
+  }
+  return false;
+}
+
+function copyLine() {
+  permaLine.stroke(colHue, colSat, colBri, 80);
+  permaLine.strokeWeight(6);
+  if (throughDotCount > 1) {
+    permaLine.line(tempwinMouseX, tempwinMouseY, tempwinMouseX2, tempwinMouseY2);
+  }
+}
+
+// Dot class, not used in intro
+class Dot {
+  constructor(x, y, r) {
+    this.x = x;
+    this.y = y;
+    this.r = r;
+    // this.brightness = 255;
+    this.h = primaryArray[int(random(0, 3))];
+    this.s = 0;
+    this.b = random(80, 255);
+  }
+  show() {
+    noStroke();
+    fill(this.h, this.s, this.b * 0.9, 100);
+    ellipse(this.x, this.y, this.r * 3);
+    fill(this.h, this.s, this.b * 0.65, 100);
+    ellipse(this.x, this.y, this.r * 2.5);
+    fill(this.h, this.s, this.b * 0.4, 100);
+    ellipse(this.x, this.y, this.r * 2);
+  }
+  getCol(x, y) {
+    let d = dist(x, y, this.x, this.y);
+    if (d < this.r * 4 && (this.x != verifyX || this.y != verifyY)) {
+      colHue = this.h;
+      this.s = 255;
+    }
+  }
+  clicked(x, y) {
+
+    let rMultiplier = 1;
+    let d = dist(x, y, this.x, this.y);
+    if (throughDotCount === 0) {
+      rMultiplier = 1.2; // increase radius for first grab
+    }
+    if (d < this.r * 2.05 * rMultiplier && (this.x != verifyX || this.y != verifyY)) {
+      verifyX = this.x;
+      verifyY = this.y;
+      tempwinMouseX2 = tempwinMouseX;
+      tempwinMouseY2 = tempwinMouseY;
+      tempwinMouseX = this.x;
+      tempwinMouseY = this.y;
+      throughDotCount++;
+      tempOpacity = 20;
+      hitRad = 60;
+      // this.brightness = 250;
+      if (colHue != this.h) {
+        if (abs(colHue - this.h) > 280) {
+          this.h = (((this.h + colHue) / 2) - 180) % 360;;
+        } else {
+          this.h = ((this.h + colHue) / 2) % 360;;
+        }
+      }
+      colHue = this.h;
+      this.s = colSat;
+      this.b = colBri;
+      copyLine();
+    }
+  }
+}
+
+function nextDrawing() {
+  throughDotCount = 0;
+  dotsCount = 0;
+  click.play();
+  permaLine.clear();
+  lineLayer.clear();
+  if (stage < 3) {
+    stage0grid();
+  } else if (stage >= 3 && stage < 6) {
+    stage1grid();
+  } else if (stage >= 6 && stage < 8) {
+    stage2grid();
+  } else if (stage >= 8 && stage < 9) {
+    stage3grid();
+  } else if (stage >= 9 && stage < 11) {
+    stage4grid();
+  } else if (stage >= 11 && stage < 13) {
+    stage5grid();
+  }
+  tintedBG.image(bg, 0, 0, width, height);
+  tintedBG.fill(0, (20 * stage));
+  tintedBG.rect(0, 0, width, height);
+  stage++;
 }
 
 function stage0grid() {
@@ -145,10 +315,9 @@ function stage1grid() {
     let spaceY = height / dotQtyY + 4;
     for (let i = 0; i < dotQtyX; i++) {
       for (let j = 0; j < dotQtyY; j++) {
-        dots[dotsCount++] = new Dot((i + 1) * (spaceX), (j + 1) * (spaceY), r);
+        dots[dotsCount++] = new Dot((i + 1) * spaceX, (j + 1) * spaceY, r);
       }
     }
-
   } else if (stage === 4) {
     dotQtyX = 2;
     dotQtyY = 5 * 4;
@@ -157,10 +326,10 @@ function stage1grid() {
     let spaceY = height / dotQtyY + 2;
     for (let i = 0; i < dotQtyX; i++) {
       for (let j = 0; j < dotQtyY; j += 4) {
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) - (spaceX / 6), (j + 0.5) * (spaceY), r);
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + (spaceX / 6), (j + 0.5) * (spaceY), r);
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) - (spaceX / 3), (j + 0.5) * (spaceY) + (spaceY * 2), r);
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + ((spaceX / 6) * 2), (j + 0.5) * (spaceY) + (spaceY * 2), r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * spaceX) - (spaceX / 6), (j + 0.5) * spaceY, r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * spaceX) + (spaceX / 6), (j + 0.5) * spaceY, r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * spaceX) - (spaceX / 3), (j + 0.5) * spaceY + (spaceY * 2), r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * spaceX) + ((spaceX / 6) * 2), (j + 0.5) * spaceY + (spaceY * 2), r);
       }
     }
 
@@ -172,10 +341,10 @@ function stage1grid() {
     let spaceY = height / dotQtyY + 2;
     for (let i = 0; i < dotQtyX; i++) {
       for (let j = 0; j < dotQtyY; j += 4) {
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) - (spaceX / 6), (j + 0.5) * (spaceY), r);
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + (spaceX / 6), (j + 0.5) * (spaceY), r);
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) - (spaceX / 3), (j + 0.5) * (spaceY) + (spaceY * 2), r);
-        dots[dotsCount++] = new Dot(((i + 0.5) * (spaceX)) + ((spaceX / 6) * 2), (j + 0.5) * (spaceY) + (spaceY * 2), r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * spaceX) - (spaceX / 6), (j + 0.5) * spaceY, r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * spaceX) + (spaceX / 6), (j + 0.5) * spaceY, r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * spaceX) - (spaceX / 3), (j + 0.5) * spaceY + (spaceY * 2), r);
+        dots[dotsCount++] = new Dot(((i + 0.5) * spaceX) + ((spaceX / 6) * 2), (j + 0.5) * spaceY + (spaceY * 2), r);
       }
     }
   }
@@ -272,321 +441,4 @@ function stage5grid() {
   x += 5;
   y += 5;
   dotSize--;
-}
-
-function nextGrid() {
-  throughDotCount = 0;
-  dotsCount = 0;
-  click.play();
-  permaLine.clear();
-  lineLayer.clear();
-  if (stage < 3) {
-    stage0grid();
-  } else if (stage >= 3 && stage < 6) {
-    stage1grid();
-  } else if (stage >= 6 && stage < 8) {
-    stage2grid();
-  } else if (stage >= 8 && stage < 9) {
-    stage3grid();
-  } else if (stage >= 9 && stage < 11) {
-    stage4grid();
-  } else if (stage >= 11 && stage < 13) {
-    stage5grid();
-  }
-  tintedBG.image(bg, 0, 0, width, height);
-  tintedBG.fill(0, (20 * stage));
-  tintedBG.rect(0, 0, width, height);
-  stage++;
-}
-
-function draw() {
-  if (introState === 3) {
-    image(tintedBG, 0, 0, width, height);
-    image(lineLayer, 0, 0);
-    image(permaLine, 0, 0);
-    fill(255, tempOpacity--);
-    if (hitRad < 200) {
-      circle(tempwinMouseX, tempwinMouseY, hitRad++)
-    }
-    for (let i = 0; i < dotsCount; i++) {
-      dots[i].show();
-    }
-  } else {
-    blendMode(BLEND);
-    background(205, 12, 64, 100);
-    if (slide > 0) {
-      stroke(150);
-      strokeWeight(8);
-      // animated circle in the introduction
-      if (expanding) {
-        rad = rad + 0.1;
-      } else {
-        rad = rad - 0.1;
-      }
-      if (rad < 50) {
-        expanding = 1;
-      } else if (rad > 70) {
-        expanding = 0;
-      }
-      circle(xintro[throughDotCount], yintro[throughDotCount], rad)
-      // primary introduction layers
-      line(xintro[throughDotCount - 1], yintro[throughDotCount - 1], mouseX, mouseY);
-      image(introLayer, 0, 0, width, height);
-
-      // check to see if the initial line demo is complete, if not, run the demo
-      if (demoStage === 0 || demoStage === 1) {
-        let _d = vMax * 10;
-        let _d2 = _d / 2;
-        let _x1 = width * 0.3;
-        let _x2 = (((finger_xEased) * width) * 0.4) + (width * 0.3);
-        let __h = height * 0.5;
-        circle(_x2, __h, rad);
-        strokeCap(SQUARE);
-
-        // dotted line
-        for (i = 0; i < 30; i++) {
-          stroke(255);
-          let l = lerp(_x1, _x2, i / 30)
-          let ln = (_x2 - _x1) / 60; // line length
-          if (i != 0 && i % 4 === 0) { // modulo to skip every nth line
-            noStroke();
-            triangle(l - (ln), __h - (ln), l - (ln), __h + (ln), l + (ln), __h);
-          }
-        }
-        fill(255);
-
-        if (finger_x < 100) {
-          finger_x += 0.32;
-        }
-
-        if (finger_x > 99) {
-          demoStage = 1;
-        }
-        finger_xEased = easing(finger_x, 0, 1, 100)
-      }
-
-      // make a demonstation drawing over the guide dots
-      if (demoStage === 1 && cycle_count < 2) {
-        fill(0, 30, 100);
-        stroke(0, 30, 100);
-        circle(width * 0.30, height * 0.5, 50, 50);
-        if (intro_X > width*0.30 && intro_X < (width * 0.70) + 25) {
-          line(width * 0.30, height * 0.5, intro_X, height * 0.5);
-        }
-        intro_X += 1.7;
-
-        if (intro_X > (width * 0.70) - 25) {
-          circle(width * 0.70, height * 0.5, 50, 50);
-          line(width * 0.30, height * 0.5, width * 0.70, height * 0.5);
-        }
-        if (intro_X >= (width * 0.70) + 100) {
-          intro_X = (width*0.30)-100;
-          cycle_count++;
-        }
-      }
-      fill(255);
-    }
-
-    if (slide > 0) {
-      textLayer.text(introText[slide - 1], width / 2, (height / 3) * (slide - 1));
-    }
-    image(textLayer, 0, 0, width, height);
-  }
-}
-
-function easing(t, b, c, d) {
-  t /= d / 2;
-  if (t < 1) return c / 2 * t * t + b;
-  t--;
-  return -c / 2 * (t * (t - 2) - 1) + b;
-}
-
-function introRGB() {
-  introHue = primaryArray[int(random(0, 3))];
-  introLayer.stroke(introHue, 0, 100);
-  introLayer.fill(introHue, 0, 100);
-}
-
-function touchdown(ev) {
-
-  isMousedown = 1;
-
-  if (introState === 3) {
-    for (let i = 0; i < dotsCount; i++) {
-      dots[i].getCol(winMouseX, winMouseY);
-      dots[i].clicked(winMouseX, winMouseY);
-    }
-  }
-  if (introState < 3) {
-    if (audio.isPlaying()) {} else {
-      audio.loop(0);
-    }
-    if (slide === 0) {
-      startUp();
-    }
-  }
-  return false;
-}
-
-
-function touchstop() {
-  isMousedown = 0;
-
-  if (slide > 0) {
-    introLayer.clear();
-    introRGB();
-    makeintroDots();
-  }
-  lineLayer.clear();
-  throughDotCount = 0;
-  // verifyX = 0;
-  // verifY = 0;
-}
-
-function startUp() {
-  click.play();
-  startButton.remove();
-  slide++;
-  //BUG, infinite loop potential..
-  touchdown();
-  slideShow();
-}
-
-function moved(ev) {
-
-  if (!isMousedown) return;
-
-  ev.preventDefault();
-
-  if (introState === 3) {
-    for (let i = 0; i < dotsCount; i++) {
-      dots[i].clicked(winMouseX, winMouseY);
-    }
-    hueDrift = int(random(-2, 2));
-    satDrift = int(random(-2, 2));
-    brightDrift = int(random(-2, 2));
-    lineLayer.stroke(colHue + hueDrift, colSat + satDrift, colBri + brightDrift, 80);
-    lineLayer.strokeWeight(8);
-    lineLayer.clear();
-    if (throughDotCount > 0) {
-      lineLayer.line(tempwinMouseX, tempwinMouseY, winMouseX, winMouseY);
-    }
-  } else {
-
-    introSlideshow(mouseX, mouseY);
-  }
-  return false;
-}
-
-function introSlideshow(__x, __y) {
-
-  introLayer.stroke(introHue, 40 + (throughDotCount * 3), 100);
-  introLayer.fill(introHue, 40 + (throughDotCount * 3), 100);
-  introLayer.ellipse(xintro[throughDotCount], yintro[throughDotCount], 50, 50);
-
-  if (dist(__x, __y, xintro[throughDotCount], yintro[throughDotCount]) < 30) {
-    //pop.play();
-    if (demoStage === 2) {
-      let _x = constrain(randomGaussian(width / 2, width / 4), 100, width - 100);
-      let _y = constrain(randomGaussian(height / 2, height / 4), 100, height - 100);
-      xintro.push(_x);
-      yintro.push(_y);
-    } else {
-      let _x = width * 0.7;
-      let _y = height * 0.5;
-      xintro.push(_x);
-      yintro.push(_y);
-
-    }
-    if (throughDotCount > 0) {
-      demoStage = 2;
-    }
-
-    throughDotCount++;
-
-    if (throughDotCount > 1) {
-      introLayer.background(205, 12, 64, 0.1);
-      introLayer.line(xintro[throughDotCount - 2], yintro[throughDotCount - 2], xintro[throughDotCount - 1], yintro[throughDotCount - 1]);
-    }
-    introRGB();
-  }
-}
-
-function makeintroDots() {
-  if (demoStage === 2) {
-    xintro[0] = int(random(width / 10, width - (width / 10)));
-    yintro[0] = int(random(height / 10, height - (height / 10)));
-  } else {
-    xintro[0] = width * 0.3;
-    yintro[0] = height * 0.5;
-  }
-  introRGB();
-  introLayer.ellipse(xintro[0], yintro[0], 50, 50);
-}
-
-function copyLine() {
-  permaLine.stroke(colHue + hueDrift, colSat + hueDrift, colBri + brightDrift, 80);
-  permaLine.strokeWeight(6);
-  if (throughDotCount > 1) {
-    permaLine.line(tempwinMouseX, tempwinMouseY, tempwinMouseX2, tempwinMouseY2);
-  }
-}
-class Dot {
-  constructor(x, y, r) {
-    this.x = x;
-    this.y = y;
-    this.r = r;
-    // this.brightness = 255;
-    this.h = primaryArray[int(random(0, 3))];
-    this.s = 0;
-    this.b = random(80, 255);
-  }
-  show() {
-    noStroke();
-    fill(this.h, this.s, this.b * 0.9, 100);
-    ellipse(this.x, this.y, this.r * 3);
-    fill(this.h, this.s, this.b * 0.65, 100);
-    ellipse(this.x, this.y, this.r * 2.5);
-    fill(this.h, this.s, this.b * 0.4, 100);
-    ellipse(this.x, this.y, this.r * 2);
-  }
-  getCol(x, y) {
-    let d = dist(x, y, this.x, this.y);
-    if (d < this.r * 4 && (this.x != verifyX || this.y != verifyY)) {
-      colHue = this.h;
-      this.s = 255;
-    }
-  }
-  clicked(x, y) {
-
-    let rMultiplier = 1;
-    let d = dist(x, y, this.x, this.y);
-    if (throughDotCount === 0) {
-      rMultiplier = 1.2; // increase radius for first grab
-    }
-    if (d < this.r * 2.05 * rMultiplier && (this.x != verifyX || this.y != verifyY)) {
-      verifyX = this.x;
-      verifyY = this.y;
-      tempwinMouseX2 = tempwinMouseX;
-      tempwinMouseY2 = tempwinMouseY;
-      tempwinMouseX = this.x;
-      tempwinMouseY = this.y;
-      throughDotCount++;
-      //pop.play();
-      tempOpacity = 20;
-      hitRad = 60;
-      // this.brightness = 250;
-      if (colHue != this.h) {
-        if (abs(colHue - this.h) > 280) {
-          this.h = (((this.h + colHue) / 2) - 180) % 360;;
-        } else {
-          this.h = ((this.h + colHue) / 2) % 360;;
-        }
-      }
-      colHue = this.h;
-      this.s = colSat;
-      this.b = colBri;
-      copyLine();
-    }
-  }
 }
