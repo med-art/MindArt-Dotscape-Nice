@@ -41,6 +41,10 @@ let introText = ["Touchez et Ecoutez", "Regardez", "Dessinez"],
   delayTime = 15000,
   introComplete = 0;
 
+//DATA
+  let lineStore;
+  let pointStore;
+
 
 function preload() {
   bg = loadImage('assets/paper.jpg');
@@ -85,6 +89,10 @@ function setup() {
   canvas.addEventListener('mouseup', touchstop);
   // canvas.addEventListener('orientationchange', resizeWindow);
   // canvas.addEventListener('resize', resizeWindow);
+
+  //DATA
+  lineStore = [];
+  pointStore = [];
 
 }
 
@@ -190,6 +198,17 @@ function moved(ev) {
     if (throughDotCount > 0) {
       lineLayer.line(tempwinMouseX, tempwinMouseY, winMouseX, winMouseY);
     }
+
+
+    //DATA
+    pressure = getPressure(ev);
+    pointStore.push({
+      time: new Date().getTime(),
+      x: mouseX,
+      y: mouseY,
+      pressure: pressure
+    });
+
   } else {
     introSlideshow(mouseX, mouseY);
   }
@@ -200,9 +219,22 @@ function copyLine() {
   permaLine.stroke(colHue, colSat, colBri, 80);
   permaLine.strokeWeight(6);
   if (throughDotCount > 1) {
-    permaLine.line(tempwinMouseX, tempwinMouseY, tempwinMouseX2, tempwinMouseY2);
+    let x1 = tempwinMouseX;
+    let y1 = tempwinMouseY;
+    let x2 = tempwinMouseX2;
+    let y2 = tempwinMouseY2;
+    permaLine.line(x1, y1, x2, y2);
+    //DATA
+    lineStore.push({line:{x1:x1,y1:y1,x2:x2,y2:y2}, points:pointStore, stage:stage});
+    pointStore = [];
+
   }
 }
+
+getPressure = function (ev) {
+  return ((ev.touches && ev.touches[0] && typeof ev.touches[0]["force"] !== "undefined") ? ev.touches[0]["force"] : 1.0);
+}
+
 
 // Dot class, not used in intro
 class Dot {
